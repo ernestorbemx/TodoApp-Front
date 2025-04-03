@@ -2,12 +2,15 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { HeroUIProvider } from '@heroui/system'
+import { AppModal } from './components/AppModal'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
+    <HeroUIProvider>
+      <AppModal></AppModal>
       <div>
         <h1 className='text-4xl text-red-300'>Tailwind is awesome</h1>
         <a href="https://vite.dev" target="_blank">
@@ -29,7 +32,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-    </>
+    </HeroUIProvider>
   )
 }
 
