@@ -17,7 +17,10 @@ export interface Pagination {
 
 export interface TodoFilter {
     done?: boolean;
-    text?: boolean;
+    text?: string;
     priority?: Priority;
+}
+
+export interface Sorting {
     sortingFields?: string;
 }
