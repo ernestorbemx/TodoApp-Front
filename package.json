@@ -13,6 +13,7 @@
     "@heroui/button": "^2.2.16",
     "@heroui/card": "^2.2.15",
     "@heroui/checkbox": "^2.3.15",
+    "@heroui/date-picker": "^2.3.16",
     "@heroui/input": "^2.4.16",
     "@heroui/modal": "^2.2.13",
     "@heroui/pagination": "^2.2.14",
@@ -20,10 +21,16 @@
     "@heroui/system": "^2.4.12",
     "@heroui/table": "^2.2.15",
     "@heroui/theme": "^2.4.12",
+    "@heroui/toast": "^2.0.6",
+    "@hookform/resolvers": "^5.0.1",
+    "@internationalized/date": "^3.7.0",
     "axios": "^1.8.4",
     "framer-motion": "^12.6.3",
+    "lucide-react": "^0.487.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.55.0",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
