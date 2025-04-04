@@ -1,34 +1,67 @@
 import { Button } from "@heroui/button";
 import { useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
-import { TodoForm } from "./TodoForm";
+import { TodoForm, TodoFormProps, TodoFormSchema } from "./TodoForm";
+import { useCallback, useState } from "react";
+import { createTodo } from "../http/todo";
+import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
+import { addToast } from "@heroui/toast";
+import { Todo } from "../types";
+
+
 
 export function NewTodo() {
 
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
+  const [todo, setTodo] = useState<Partial<Todo>>();
+  const [loading, setLoading] = useState(false)
 
-    return (
-      <div className="flex w-full justify-start">
-        <Button className="" variant="solid" color="primary" onPress={onOpen}>New To-do</Button>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">Create new To-do</ModalHeader>
-                <ModalBody>
-                    <TodoForm></TodoForm>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Action
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </div>
-    );
+  const handleCreation = useCallback((todo: TodoFormSchema )=> {
+    setTodo({})
+    setLoading(true)
+    createTodo({ 
+      text: todo.text,
+      dueDate: (todo.dueDate as CalendarDate)?.toDate(getLocalTimeZone()),
+      priority: todo.prioriy
+    })
+    .then((res) => {
+      if(res.status == 200) {
+        addToast({
+          color: "success",
+          title: `To-do "${todo.text.substring(0,10)}..." created`,
+          description: "You can now refresh the table"
+        })
+        setTodo(undefined)
+        onClose();
+        return;
+      }
+      addToast({
+        color: "warning",
+        title: `To-do couldn't created`,
+        description: "Plese try again later."
+      })
+
+    }).catch((e) => {
+      addToast({
+        color: "warning",
+        title: `To-do couldn't created`,
+        description: `Error: ${e.message}`
+      })
+    })
+    .finally(() => {
+      setLoading(false)
+    })
+  }, [])
+
+  return (
+    <div className="flex w-full justify-start">
+      <Button className="" variant="solid" color="primary" onPress={onOpen}>New To-do</Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={!loading}>
+        <ModalContent>
+          {(onClose) => (
+            <TodoForm todo={todo} loading={loading} label="Create new Todo" onChange={handleCreation} onClose={onClose}></TodoForm>
+          )}
+        </ModalContent>
+      </Modal>
+    </div>
+  );
 }
