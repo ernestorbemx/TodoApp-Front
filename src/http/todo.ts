@@ -1,9 +1,7 @@
-import axios from "axios";
-import { Pagination, Todo, TodoFilter } from "../types";
-
+import { Pagination, Sorting, Todo, TodoFilter } from "../types";
+import { http } from "./client";
 
 export type Priority = "HIGH" | "MEDIUM" | "LOW"
-
 
 export interface CreateTodo {
     text: string;
@@ -12,12 +10,10 @@ export interface CreateTodo {
 }
 
 export function createTodo(todo: CreateTodo) {
-    return axios.post<Todo[]>("/todo", todo)
+    return http.post<Todo[]>("/todos", todo)
 }
 
-
-
-export function getTodos(filters: TodoFilter, pagination: Pagination) {
+export function getTodos(filters: TodoFilter, sorting: Sorting, pagination: Pagination) {
     const params = new URLSearchParams()
     if(filters.done != undefined) {
         params.append("done", String(filters.done));
@@ -28,9 +24,10 @@ export function getTodos(filters: TodoFilter, pagination: Pagination) {
     if(filters.priority != undefined) {
         params.append("priority", String(filters.priority));
     }
+    params.append("sortingFields", String(sorting.sortingFields));
     params.append("page", String(pagination.page));
     params.append("size", String(pagination.size));
-    return axios.get<Todo>(`/todo?${params.toString()}`)
+    return http.get<Todo[]>(`/todos?${params.toString()}`)
 }
 
 
@@ -42,18 +39,22 @@ export interface EditTodo {
 
 
 export function editTodo(id: number, todo: EditTodo) {
-    return axios.put<Todo | undefined>(`/todo/${id}`, todo)
+    return http.put<Todo | undefined>(`/todos/${id}`, todo)
 }
 
 export function markAsDone(id: number) {
-    return axios.put<Todo | undefined>(`/todo/${id}/done`)
+    return http.put<Todo | undefined>(`/todos/${id}/done`)
 }
 
 export function markAsUndone(id: number) {
-    return axios.put<Todo | undefined>(`/todo/${id}/undone`)
+    return http.put<Todo | undefined>(`/todos/${id}/undone`)
+}
+
+export function changeStatus(id: number, newStatus: boolean) {
+    return newStatus ? markAsDone(id) : markAsUndone(id);
 }
 
 
 export function deleteTodo(id: number) {
-    return axios.put<Todo | undefined>(`/todo/${id}/undone`)
+    return http.put<Todo | undefined>(`/todos/${id}/undone`)
 }
