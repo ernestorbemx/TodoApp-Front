@@ -1,4 +1,4 @@
-import { Pagination, Sorting, Todo, TodoFilter } from "../types";
+import { Pagination, PaginationResult, Sorting, Todo, TodoFilter } from "../types";
 import { http } from "./client";
 
 export type Priority = "HIGH" | "MEDIUM" | "LOW"
@@ -10,7 +10,7 @@ export interface CreateTodo {
 }
 
 export function createTodo(todo: CreateTodo) {
-    return http.post<Todo[]>("/todos", todo)
+    return http.post<Todo>("/todos", todo)
 }
 
 export function getTodos(filters: TodoFilter, sorting: Sorting, pagination: Pagination) {
@@ -27,7 +27,7 @@ export function getTodos(filters: TodoFilter, sorting: Sorting, pagination: Pagi
     params.append("sortingFields", String(sorting.sortingFields));
     params.append("page", String(pagination.page));
     params.append("size", String(pagination.size));
-    return http.get<Todo[]>(`/todos?${params.toString()}`)
+    return http.get<PaginationResult<Todo>>(`/todos?${params.toString()}`)
 }
 
 
@@ -56,5 +56,5 @@ export function changeStatus(id: number, newStatus: boolean) {
 
 
 export function deleteTodo(id: number) {
-    return http.put<Todo | undefined>(`/todos/${id}/undone`)
+    return http.delete<Todo | undefined>(`/todos/${id}`)
 }
