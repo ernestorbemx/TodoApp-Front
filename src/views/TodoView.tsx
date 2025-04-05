@@ -5,7 +5,7 @@ import { TodoStats } from "../components/TodoStats";
 import { TodoTable } from "../components/TodoTable";
 import { useCallback, useEffect, useState } from "react";
 import { getTodos } from "../http/todo";
-import { Todo, TodoFilter } from "../types";
+import { PaginationResult, Todo, TodoFilter } from "../types";
 import { addToast } from "@heroui/toast";
 
 
@@ -16,13 +16,13 @@ export function TodoView() {
     const [page, setPage] = useState<number>(1)
     const [filters, setFilters] = useState<TodoFilter>({})
     const [sorting, setSorting] = useState<string>("")
-    const [todos, setTodos] = useState<Todo[]>([])
+    const [todoResult, setTodoResult] = useState<PaginationResult<Todo> | undefined>()
 
     const fetchTodos = useCallback(async () => {
         setFetching(true);
         getTodos(filters, { sortingFields: sorting }, { page, size: PAGE_SIZE }).then((res) => {
             if (res.status == 200) {
-                setTodos(res.data)
+                setTodoResult(res.data)
             }
         })
             .catch((e) => {
@@ -35,7 +35,7 @@ export function TodoView() {
             }).finally(() => {
                 setFetching(false);
             })
-    }, [setTodos, filters, page, sorting])
+    }, [setTodoResult, filters, page, sorting])
 
     useEffect(() => {
         fetchTodos()
@@ -49,10 +49,17 @@ export function TodoView() {
         </div>
         <TodoFilters searching={fetching} onChange={(filter) => {
             setFilters(filter);
+            fetchTodos();
         }} />
-        <NewTodo />
-        <TodoTable onSortingChange={setSorting} onUpdate={() => {}}  data={todos} />
-        <Pagination initialPage={1} total={10} onChange={(page) => setPage(page)} />
+        <NewTodo onNew={() => {
+            fetchTodos();
+            // add optimistic
+        }} />
+        <TodoTable onSortingChange={setSorting} onUpdate={() => {
+            fetchTodos()
+            // add optimistic
+        }}  data={todoResult?.data ?? []} />
+        <Pagination initialPage={1} page={page} total={todoResult?.availablePages ?? 1} onChange={(page) => setPage(page)} />
         <TodoStats />
     </div>
 }

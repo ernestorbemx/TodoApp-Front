@@ -7,9 +7,11 @@ import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
 import { addToast } from "@heroui/toast";
 import { Todo } from "../types";
 
+export interface NewTodoProps {
+  onNew: (todo: Todo) => unknown
+}
 
-
-export function NewTodo() {
+export function NewTodo({ onNew }: NewTodoProps) {
 
   const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
   const [todo, setTodo] = useState<Partial<Todo>>();
@@ -21,7 +23,7 @@ export function NewTodo() {
     createTodo({ 
       text: todo.text,
       dueDate: (todo.dueDate as CalendarDate)?.toDate(getLocalTimeZone()),
-      priority: todo.prioriy
+      priority: todo.priority
     })
     .then((res) => {
       if(res.status == 200) {
@@ -30,6 +32,7 @@ export function NewTodo() {
           title: `To-do "${todo.text.substring(0,10)}..." created`,
           description: "You can now refresh the table"
         })
+        onNew(res.data)
         setTodo(undefined)
         onClose();
         return;
