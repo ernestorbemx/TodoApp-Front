@@ -31,3 +31,10 @@ export interface TodoFilter {
 export interface Sorting {
     sortingFields?: string;
 }
+
+export interface Stats {
+    avg: number;
+    lowPriorityAvg: number;
+    mediumPriorityAvg: number;
+    highPriorityAvg: number;
+} 

@@ -4,8 +4,8 @@ import { TodoFilters } from "../components/TodoFilters";
 import { TodoStats } from "../components/TodoStats";
 import { TodoTable } from "../components/TodoTable";
 import { useCallback, useEffect, useState } from "react";
-import { getTodos } from "../http/todo";
-import { PaginationResult, Todo, TodoFilter } from "../types";
+import { getSTats, getTodos } from "../http/todo";
+import { PaginationResult, Stats, Todo, TodoFilter } from "../types";
 import { addToast } from "@heroui/toast";
 
 
@@ -17,6 +17,28 @@ export function TodoView() {
     const [filters, setFilters] = useState<TodoFilter>({})
     const [sorting, setSorting] = useState<string>("")
     const [todoResult, setTodoResult] = useState<PaginationResult<Todo> | undefined>()
+    const [stats, setStats] = useState<Stats | undefined>()
+
+    const fetchStats = useCallback(() => {
+        getSTats().then(res => {
+            if (res.status == 200) {
+                setStats(res.data)
+                return;
+            }
+            addToast({
+                color: "danger",
+                title: "Error while fetching stats",
+                description: "Try again later"
+            })
+        }).catch((e) => {
+            addToast({
+                color: "danger",
+                title: "Error while fetching stats",
+                description: e.message
+
+            })
+        })
+    }, [setStats])
 
     const fetchTodos = useCallback(async () => {
         setFetching(true);
@@ -41,6 +63,10 @@ export function TodoView() {
         fetchTodos()
     }, [fetchTodos])
 
+    useEffect(() => {
+        fetchStats();
+    }, [filters, page, sorting])
+
 
     return <div className="flex flex-col gap-4">
         <div className="mb-4">
@@ -50,16 +76,19 @@ export function TodoView() {
         <TodoFilters searching={fetching} onChange={(filter) => {
             setFilters(filter);
             fetchTodos();
+            fetchStats();
         }} />
         <NewTodo onNew={() => {
             fetchTodos();
+            fetchStats();
             // add optimistic
         }} />
         <TodoTable onSortingChange={setSorting} onUpdate={() => {
             fetchTodos()
+            fetchStats();
             // add optimistic
-        }}  data={todoResult?.data ?? []} />
+        }} data={todoResult?.data ?? []} />
         <Pagination initialPage={1} page={page} total={todoResult?.availablePages ?? 1} onChange={(page) => setPage(page)} />
-        <TodoStats />
+        <TodoStats data={stats} />
     </div>
 }

@@ -1,4 +1,4 @@
-import { Pagination, PaginationResult, Sorting, Todo, TodoFilter } from "../types";
+import { Pagination, PaginationResult, Sorting, Stats, Todo, TodoFilter } from "../types";
 import { http } from "./client";
 
 export type Priority = "HIGH" | "MEDIUM" | "LOW"
@@ -57,4 +57,8 @@ export function changeStatus(id: number, newStatus: boolean) {
 
 export function deleteTodo(id: number) {
     return http.delete<Todo | undefined>(`/todos/${id}`)
+}
+
+export function getSTats() {
+    return http.get<Stats>(`/todos/stats`)
 }
