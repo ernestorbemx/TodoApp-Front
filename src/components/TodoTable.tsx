@@ -6,28 +6,54 @@ import { Todo } from "../types";
 import { changeStatus } from "../http/todo";
 import { addToast } from "@heroui/toast";
 import { SortField } from "./SortField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { EditTodo } from "./EditTodo";
+import { DeleteTodo } from "./DeleteTodo";
 
 export interface TodoTableProps {
   data: Todo[];
   onSortingChange: (sortingField: string) => unknown
-  onUpdate: (todo: Todo[]) => unknown
+  onUpdate: (todo: Todo[], type: "status" | "whole" | "delete") => unknown
 }
 
 
-export function TodoTable({ data, onSortingChange }: TodoTableProps) {
+export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTableProps) {
+  // const [data,setData] = useState()
+  const [data, setData] = useState<Todo[]>()
+  const [checked, setChecked] = useState(false)
   const [sorting, setSorting] = useState<string>("")
 
+  useEffect(() => {
+    setData(dataProps)
+  }, [dataProps])
+
+  useEffect(() => {
+    if(!data) {
+      setChecked(false)
+      return;
+    }
+    setChecked(data.length != 0 && data.every(t => t.done))
+  }, [data])
+
   const updateAllStatus = (newStatus: boolean) => {
-    Promise.all(data.filter(t => t.done != newStatus).map((t) => changeStatus(t.id, newStatus))).then((res) => {
+    const todosToUpdate = dataProps.filter(t => t.done != newStatus);
+    Promise.all(todosToUpdate.map((t) => changeStatus(t.id, newStatus))).then((res) => {
       if (res.every(r => r.status == 200)) {
         addToast({
           color: "success",
           title: `To-do's updated`,
           description: "You can now refresh the table"
         })
+        setData(data?.map(t => {
+          if (todosToUpdate.find(t2 => t2.id != t.id)) {
+            return { ...t }
+          }
+          return ({ ...t, done: newStatus })
+        }))
+        onUpdate(res.map(r => r.data!), "status")
         return;
       }
+      onUpdate(res.filter(r => r.status == 200).map(r => r.data!), "status")
       addToast({
         color: "warning",
         title: `Not all to-do could be updated`,
@@ -52,6 +78,13 @@ export function TodoTable({ data, onSortingChange }: TodoTableProps) {
           title: `To-do's ${todo.text} updated`,
           description: "You can now refresh the table"
         })
+        setData(data?.map(t => {
+          if (todo.id != t.id) {
+            return { ...t }
+          }
+          return ({ ...t, done: newStatus })
+        }))
+        onUpdate([res.data!], "status")
         return;
       }
       addToast({
@@ -73,7 +106,10 @@ export function TodoTable({ data, onSortingChange }: TodoTableProps) {
   return <Table aria-label="Example static collection table">
     <TableHeader>
       <TableColumn>
-        <Checkbox defaultSelected={data.length != 0 && data.every(t => t.done)} onValueChange={updateAllStatus} />
+        <Checkbox defaultSelected={dataProps.length != 0 && dataProps.every(t => t.done)} isSelected={checked} onValueChange={(selected) => {
+          updateAllStatus(selected)
+          setChecked(selected)
+        }} />
       </TableColumn>
       <TableColumn>Name</TableColumn>
       <TableColumn>
@@ -91,18 +127,18 @@ export function TodoTable({ data, onSortingChange }: TodoTableProps) {
       <TableColumn>Actions</TableColumn>
     </TableHeader>
     <TableBody>
-      {data.map(t =>
+      {data ? data.map(t =>
         <TableRow key={t.id}>
-          <TableCell><Checkbox defaultSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
+          <TableCell><Checkbox defaultSelected={t.done} isSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
           <TableCell>{t.text}</TableCell>
           <TableCell>{t.priority}</TableCell>
           <TableCell>{t.dueDate?.toString()}</TableCell>
           <TableCell>
-            <Button>Edit</Button>
-            <Button>Delete</Button>
+            <EditTodo todo={t} onEdit={(todo) => onUpdate([todo], "whole")} />
+            <DeleteTodo todo={t} onDelete={(todo) => onUpdate([todo], "delete")} />
           </TableCell>
         </TableRow>
-      )}
+      ) : <TableRow><TableCell colSpan={5}>No results</TableCell></TableRow>}
     </TableBody>
   </Table>
 }

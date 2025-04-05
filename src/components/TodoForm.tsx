@@ -5,7 +5,7 @@ import { Todo } from "../types";
 import { Controller, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { CalendarDate } from '@internationalized/date';
+import { getLocalTimeZone, parseDateTime, parseZonedDateTime, toZoned, ZonedDateTime } from '@internationalized/date';
 import { Priority } from "../http/todo";
 import { Button } from "@heroui/button";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
@@ -14,7 +14,7 @@ import { useEffect } from "react";
 const schema = yup
     .object({
         text: yup.string().max(1).max(120).required(),
-        prioriy: yup.string().oneOf(["LOW", "MEDIUM", "HIGH"]).required(),
+        priority: yup.string().oneOf(["LOW", "MEDIUM", "HIGH"]).required(),
         dueDate: yup.object().optional()
     })
     .required()
@@ -45,12 +45,13 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
         reValidateMode: "onChange",
         resolver: yupResolver(schema),
         defaultValues: {
-            ...todo
+            ...todo,
+            dueDate: todo?.dueDate ? parseDateTime(todo.dueDate) : undefined
         },
     })
 
     const onSubmit = (todo: TodoFormSchema) => {
-        onChange({...todo})
+        onChange({ ...todo })
     }
 
     useEffect(() => {
@@ -59,7 +60,8 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
             return;
         }
         reset({
-            ...todo
+            ...todo,
+            dueDate: todo?.dueDate ? parseDateTime(todo.dueDate) : undefined
         })
     }, [todo])
 
@@ -69,27 +71,25 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
             <Controller
                 name="text"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { onChange, value, onBlur, }, fieldState: { error, invalid } }) =>
                     <Textarea value={value} onValueChange={onChange} onBlur={onBlur} className="max-w-xs" label="Description" placeholder="Enter task description" isInvalid={invalid} errorMessage={error?.message} />}
             />
             <Controller
                 name="dueDate"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { onChange, value, onBlur }, fieldState: { error, invalid } }) =>
-                    <DatePicker className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as CalendarDate} isInvalid={invalid} errorMessage={error?.message} />}
+                    <DatePicker className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as ZonedDateTime} isInvalid={invalid} errorMessage={error?.message} />}
             />
 
             <Controller
-                name="prioriy"
+                name="priority"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { onChange, value, onBlur }, fieldState: { error, invalid } }) =>
                     <Select
                         onBlur={onBlur}
                         size="sm"
-                        selectedKeys={[value]}
+                        defaultSelectedKeys={value ? [value]:[]}
+                        selectedKeys={value ? [value] : []}
                         className="max-w-xs"
                         items={priorities}
                         isInvalid={invalid}

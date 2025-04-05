@@ -1,7 +1,11 @@
 import { Button } from "@heroui/button";
-import { useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
-import { TodoForm } from "./TodoForm";
+import { useDisclosure, Modal, ModalContent } from "@heroui/modal";
+import { TodoForm, TodoFormSchema } from "./TodoForm";
 import { Todo } from "../types";
+import { addToast } from "@heroui/toast";
+import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
+import { useState, useCallback } from "react";
+import { editTodo } from "../http/todo";
 
 export interface EditTodoProps {
   todo: Todo;
@@ -9,31 +13,57 @@ export interface EditTodoProps {
 }
 
 export function EditTodo({ todo, onEdit }: EditTodoProps) {
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-    return (
-      <>
-        <Button className="" variant="solid" color="primary" onPress={onOpen}>Edit Todo</Button>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">Edit To-do</ModalHeader>
-                <ModalBody>
-                    <TodoForm></TodoForm>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Update
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </>
-    );
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+
+  const [loading, setLoading] = useState(false)
+
+  const handleEdition = useCallback((todoData: TodoFormSchema) => {
+    setLoading(true)
+    editTodo(todo.id, {
+      text: todoData.text,
+      dueDate: (todoData.dueDate as CalendarDate)?.toDate(getLocalTimeZone()),
+      priority: todoData.priority
+    })
+      .then((res) => {
+        if (res.status == 200) {
+          addToast({
+            color: "success",
+            title: `To-do "${todoData.text.substring(0, 10)}..." edited`,
+            description: "You can now refresh the table"
+          })
+          onClose();
+          onEdit?.(res.data!)
+          return;
+        }
+        addToast({
+          color: "warning",
+          title: `To-do couldn't edited`,
+          description: "Plese try again later."
+        })
+
+      }).catch((e) => {
+        addToast({
+          color: "warning",
+          title: `To-do couldn't edited`,
+          description: `Error: ${e.message}`
+        })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [todo, onClose, onEdit, setLoading])
+  return (
+    <>
+      <Button className="" variant="solid" color="primary" onPress={onOpen}>Edit Todo</Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <TodoForm loading={loading} label="Edit Todo" todo={todo} onChange={(todo) => { handleEdition(todo) }} onClose={onClose}></TodoForm>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
+  );
 }
