@@ -3,11 +3,18 @@ import { Priority } from "./http/todo";
 export interface Todo {
     id: number;
     text: string;
-    dueDate?: Date;
+    dueDate?: string;
     done: boolean;
-    completionDate?: Date;
+    completionDate?: string;
     priority: Priority;
-    creationDate?: Date;
+    creationDate?: string;
+}
+
+export interface PaginationResult<T> {
+    page: number,
+    availablePages: number,
+    data: T[],
+    total: number
 }
 
 export interface Pagination {
