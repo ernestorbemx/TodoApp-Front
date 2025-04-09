@@ -5,7 +5,7 @@ import { Todo } from "../types";
 import { Controller, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { getLocalTimeZone, parseDateTime, parseZonedDateTime, toZoned, ZonedDateTime } from '@internationalized/date';
+import { parseDateTime, ZonedDateTime } from '@internationalized/date';
 import { Priority } from "../http/todo";
 import { Button } from "@heroui/button";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
