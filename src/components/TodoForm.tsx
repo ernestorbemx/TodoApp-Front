@@ -78,7 +78,7 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
                 name="dueDate"
                 control={control}
                 render={({ field: { onChange, value, onBlur }, fieldState: { error, invalid } }) =>
-                    <DatePicker  data-testid="" className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as ZonedDateTime} isInvalid={invalid} errorMessage={error?.message} />}
+                    <DatePicker granularity="minute" defaultValue={value as ZonedDateTime} data-testid="" className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as ZonedDateTime} isInvalid={invalid} errorMessage={error?.message} />}
             />
 
             <Controller
