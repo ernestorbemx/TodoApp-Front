@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getSTats, getTodos } from "../http/todo";
 import { PaginationResult, Stats, Todo, TodoFilter } from "../types";
 import { addToast } from "@heroui/toast";
+import { ThemeSwitcher } from "../components/ThemeSwitcher";
 
 
 const PAGE_SIZE = 10;
@@ -70,8 +71,14 @@ export function TodoView() {
 
     return <div className="flex flex-col gap-4">
         <div className="mb-4">
-            <h1>The Amazing Todo App</h1>
-            by Ernesto Ramirez
+            <div className="mb-4 ">
+                <h1 className="text-3xl font-bold">The <span className="line-through">Amazing</span> Todo App</h1>
+                <span>
+                    by Ernesto Ramirez
+                </span>
+            </div>
+            
+            <ThemeSwitcher />
         </div>
         <TodoFilters searching={fetching} onChange={(filter) => {
             setFilters(filter);

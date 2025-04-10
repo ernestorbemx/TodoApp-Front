@@ -11,6 +11,13 @@ vi.mock("../http/todo", (actualImport) => {
 })
 
 
+vi.mock("../components/ThemeSwitcher", (actualImport) => {
+    return ({
+        ThemeSwitcher: () => <p>Mocked Theme Switcher</p>
+    })
+})
+
+
 describe("Test TodoView component", () => {
 
     it("renders", () => {
