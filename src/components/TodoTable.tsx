@@ -8,6 +8,7 @@ import { SortField } from "./SortField";
 import { useEffect, useState } from "react";
 import { EditTodo } from "./EditTodo";
 import { DeleteTodo } from "./DeleteTodo";
+import { dueDateBackground } from "../utils";
 
 export interface TodoTableProps {
   data: Todo[];
@@ -27,7 +28,7 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
   }, [dataProps])
 
   useEffect(() => {
-    if(!data) {
+    if (!data) {
       setChecked(false)
       return;
     }
@@ -108,9 +109,9 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
         <Checkbox
           data-testid="todos-checkbox"
           defaultSelected={dataProps.length != 0 && dataProps.every(t => t.done)} isSelected={checked} onValueChange={(selected) => {
-          updateAllStatus(selected)
-          setChecked(selected)
-        }} />
+            updateAllStatus(selected)
+            setChecked(selected)
+          }} />
       </TableColumn>
       <TableColumn>Name</TableColumn>
       <TableColumn>
@@ -128,10 +129,12 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
       <TableColumn>Actions</TableColumn>
     </TableHeader>
     <TableBody>
-      {data ? data.map(t =>
-        <TableRow key={t.id}>
+      {data ? data.map(t => {
+        const bgColor = dueDateBackground(t.dueDate ? new Date(t.dueDate) : undefined)
+
+        return <TableRow key={t.id} className={`${bgColor}`}>
           <TableCell><Checkbox data-testid={`todo-check-${t.id}`} defaultSelected={t.done} isSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
-          <TableCell>{t.text}</TableCell>
+          <TableCell className={`${t.done ? "line-through" : ""}`}>{t.text}</TableCell>
           <TableCell>{t.priority}</TableCell>
           <TableCell>{t.dueDate?.toString()}</TableCell>
           <TableCell>
@@ -139,7 +142,9 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
             <DeleteTodo todo={t} onDelete={(todo) => onUpdate([todo], "delete")} />
           </TableCell>
         </TableRow>
-      ) : <TableRow><TableCell colSpan={5}>No results</TableCell></TableRow>}
+      }
+      ) : <TableRow><TableCell colSpan={5}>No results</TableCell></TableRow>
+      }
     </TableBody>
   </Table>
 }
