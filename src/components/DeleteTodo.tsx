@@ -49,7 +49,7 @@ export function DeleteTodo({ todo, onDelete: onEdit }: DeleteTodoProps) {
   }, [todo, setLoading, onEdit, onClose, addToast])
   return (
     <>
-      <Button className="" variant="solid" color="danger" onPress={onOpen}>Delete</Button>
+      <Button data-testid="delete-button" className="" variant="solid" color="danger" onPress={onOpen}>Delete</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -63,7 +63,7 @@ export function DeleteTodo({ todo, onDelete: onEdit }: DeleteTodoProps) {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={() => handleDeletion()} isLoading={loading}>
+                <Button data-testid="confirm-deletion-button" color="primary" onPress={() => handleDeletion()} isLoading={loading}>
                   Confirm
                 </Button>
               </ModalFooter></>

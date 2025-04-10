@@ -1,5 +1,4 @@
 
-import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@heroui/table";
 import { Todo } from "../types";
@@ -106,7 +105,9 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
   return <Table aria-label="Example static collection table">
     <TableHeader>
       <TableColumn>
-        <Checkbox defaultSelected={dataProps.length != 0 && dataProps.every(t => t.done)} isSelected={checked} onValueChange={(selected) => {
+        <Checkbox
+          data-testid="todos-checkbox"
+          defaultSelected={dataProps.length != 0 && dataProps.every(t => t.done)} isSelected={checked} onValueChange={(selected) => {
           updateAllStatus(selected)
           setChecked(selected)
         }} />
@@ -129,7 +130,7 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
     <TableBody>
       {data ? data.map(t =>
         <TableRow key={t.id}>
-          <TableCell><Checkbox defaultSelected={t.done} isSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
+          <TableCell><Checkbox data-testid={`todo-check-${t.id}`} defaultSelected={t.done} isSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
           <TableCell>{t.text}</TableCell>
           <TableCell>{t.priority}</TableCell>
           <TableCell>{t.dueDate?.toString()}</TableCell>
