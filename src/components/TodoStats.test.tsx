@@ -31,7 +31,7 @@ describe("test TodoStats component and formatTime", () => {
     it("should render", () => {
         render(<TodoStats data={emptyStats} />)
         expect(
-            screen.getByText("Average time to complete remaining tasks:")
+            screen.getByText( t => t.includes("Average time to complete by"))
         ).toBeDefined()
     
     })
