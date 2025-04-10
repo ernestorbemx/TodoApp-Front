@@ -56,7 +56,7 @@ export function EditTodo({ todo, onEdit }: EditTodoProps) {
   }, [todo, onClose, onEdit, setLoading])
   return (
     <>
-      <Button className="" variant="solid" color="primary" onPress={onOpen}>Edit Todo</Button>
+      <Button data-testid="edit-todo-button" className="" variant="solid" color="primary" onPress={onOpen}>Edit Todo</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

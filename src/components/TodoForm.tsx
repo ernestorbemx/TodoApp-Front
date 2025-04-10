@@ -72,13 +72,13 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
                 name="text"
                 control={control}
                 render={({ field: { onChange, value, onBlur, }, fieldState: { error, invalid } }) =>
-                    <Textarea value={value} onValueChange={onChange} onBlur={onBlur} className="max-w-xs" label="Description" placeholder="Enter task description" isInvalid={invalid} errorMessage={error?.message} />}
+                    <Textarea data-testid="todo-form-text"  value={value} onValueChange={onChange} onBlur={onBlur} className="max-w-xs" label="Description" placeholder="Enter task description" isInvalid={invalid} errorMessage={error?.message} />}
             />
             <Controller
                 name="dueDate"
                 control={control}
                 render={({ field: { onChange, value, onBlur }, fieldState: { error, invalid } }) =>
-                    <DatePicker className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as ZonedDateTime} isInvalid={invalid} errorMessage={error?.message} />}
+                    <DatePicker  data-testid="" className="max-w-[284px]" label="Due date" onBlur={onBlur} onChange={onChange} value={value as ZonedDateTime} isInvalid={invalid} errorMessage={error?.message} />}
             />
 
             <Controller
@@ -86,6 +86,7 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
                 control={control}
                 render={({ field: { onChange, value, onBlur }, fieldState: { error, invalid } }) =>
                     <Select
+                        data-testid="todo-form-priority"
                         onBlur={onBlur}
                         size="sm"
                         defaultSelectedKeys={value ? [value]:[]}
@@ -106,10 +107,10 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
             />
         </ModalBody>
         <ModalFooter>
-            <Button color="danger" variant="light" onPress={onClose}>
+            <Button data-testid="todo-form-close" color="danger" variant="light" onPress={onClose}>
                 Close
             </Button>
-            <Button color="primary" onClick={handleSubmit(onSubmit)} isLoading={loading}>
+            <Button data-testid="todo-form-submit" color="primary" onClick={handleSubmit(onSubmit)} isLoading={loading}>
                 Submit
             </Button>
         </ModalFooter>

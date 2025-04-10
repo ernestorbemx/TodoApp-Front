@@ -57,7 +57,7 @@ export function NewTodo({ onNew }: NewTodoProps) {
 
   return (
     <div className="flex w-full justify-start">
-      <Button className="" variant="solid" color="primary" onPress={onOpen}>New To-do</Button>
+      <Button data-testid="create-todo-button" className="" variant="solid" color="primary" onPress={onOpen}>New To-do</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={!loading}>
         <ModalContent>
           {(onClose) => (

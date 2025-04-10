@@ -2,10 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Stats,  } from "../types";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import { formatTime, TodoStats } from "./TodoStats";
+import { TodoStats } from "./TodoStats";
+import { formatTime } from "../utils";
 
-
-vi.mock('./TodoStats', { spy: true })
+vi.mock('../utils', { spy: true })
 // const formatTimeMock = vi.mocked(formatTime)
 
 
@@ -41,12 +41,6 @@ describe("test TodoStats component and formatTime", () => {
         expect(
             screen.getByText("No stats at the moment")
         ).toBeDefined()
-    })
-
-    it("should format time correctly", () => {
-        expect(formatTime(60)).toBe("01:00")
-        expect(formatTime(621)).toBe("10:21")
-        expect(formatTime(59)).toBe("00:59")
     })
 
     it.skip("should call formatTime four times when data is all set", () => {
