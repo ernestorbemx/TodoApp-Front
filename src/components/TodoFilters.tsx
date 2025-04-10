@@ -29,15 +29,15 @@ export interface TodoFiltersProps {
 export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
     const [filter, setFilter] = useState<TodoFilter>({})
 
-    return <Card className="p-4 gap-4">
+    return <Card className="p-4 gap-4 w-full">
         <h3 className="text-left font-bold text-lg">Filters</h3>
-        <div className="flex gap-8 items-center ">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2 items-start ">
             <label className="w-16 text-left flex-shrink-0 font-semibold">Text</label>
             <Input data-testid="text-filter" label="Text search" placeholder="Write a text the todo must contain" onValueChange={(text) => {
                 setFilter(f => ({ ...f, text: text }))
             }}></Input>
         </div>
-        <div className="flex gap-8 items-center  ">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2 items-start ">
             <label className="w-16 text-left flex-shrink-0 font-semibold">Priority</label>
             <Select
                 data-testid="priority-filter"
@@ -53,7 +53,7 @@ export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
                 {(priority: typeof priorities[0]) => <SelectItem key={priority.value}>{priority.label}</SelectItem>}
             </Select>
         </div>
-        <div className="flex gap-8 items-center ">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2 items-start ">
             <label className="w-16 text-left flex-shrink-0 font-semibold">State</label>
             <Select
                 data-testid="status-filter"

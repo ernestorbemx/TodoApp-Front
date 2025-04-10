@@ -69,7 +69,7 @@ export function TodoView() {
     }, [filters, page, sorting])
 
 
-    return <div className="flex flex-col gap-4">
+    return <div className="w-full flex flex-col gap-4">
         <div className="mb-4">
             <div className="mb-4 ">
                 <h1 className="text-3xl font-bold">The <span className="line-through">Amazing</span> Todo App</h1>

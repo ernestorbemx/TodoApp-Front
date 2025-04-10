@@ -16,7 +16,7 @@ export function PriorityLabel({ priority }: { priority?: string }) {
         return null;
     }
 
-    return <div className={`px-2 py-1 rounded-md w-max ${classes[priority]}`}>
+    return <div className={`inline-flex px-2 py-1 rounded-md w-max ${classes[priority]}`}>
         {labels[priority]}
     </div>
 }
