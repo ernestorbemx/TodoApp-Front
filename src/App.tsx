@@ -4,7 +4,7 @@ import { TodoView } from './views/TodoView'
 import {ToastProvider} from "@heroui/toast";
 function App() {
   return (
-    <HeroUIProvider>
+    <HeroUIProvider className='flex'>
       <ToastProvider />
       <TodoView></TodoView>
     </HeroUIProvider>
