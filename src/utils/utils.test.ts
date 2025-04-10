@@ -13,13 +13,13 @@ describe("utils.ts", () => {
 
     describe("dueDateBackground()", () => {
         it("should return background colors correspondingly", () => {
-            expect(dueDateBackground()).toBe("bg-white")
-            expect(dueDateBackground(new Date(Date.now()))).toBe("bg-red-100") // less than or equal one week
-            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7))).toBe("bg-red-100") // less than or equal one week
-            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 + 1))).toBe("bg-yellow-100") // one week and less than or equal two weeks
-            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 - 1))).toBe("bg-yellow-100") // one week and less than or equal two weeks
-            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 + 1))).toBe("bg-green-100") // more than two weeks
-            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 3))).toBe("bg-green-100") // more than two weeks
+            expect(dueDateBackground()).toBe("bg-transparent dark:text-white")
+            expect(dueDateBackground(new Date(Date.now()))).toBe("bg-red-200 dark:bg-red-400 dark:text-black") // less than or equal one week
+            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7))).toBe("bg-red-200 dark:bg-red-400 dark:text-black") // less than or equal one week
+            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 + 1))).toBe("bg-yellow-200 dark:bg-yellow-400 dark:text-black") // one week and less than or equal two weeks
+            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 - 1))).toBe("bg-yellow-200 dark:bg-yellow-400 dark:text-black") // one week and less than or equal two weeks
+            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 + 1))).toBe("bg-green-200 dark:bg-green-400 dark:text-black") // more than two weeks
+            expect(dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 3))).toBe("bg-green-200 dark:bg-green-400 dark:text-black") // more than two weeks
         })
     })
 })
