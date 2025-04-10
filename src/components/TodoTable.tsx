@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { EditTodo } from "./EditTodo";
 import { DeleteTodo } from "./DeleteTodo";
 import { dueDateBackground } from "../utils";
+import { PriorityLabel } from "./PriorityLabel";
+import { format, formatDistanceToNow } from 'date-fns'
 
 export interface TodoTableProps {
   data: Todo[];
@@ -131,12 +133,14 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
     <TableBody>
       {data ? data.map(t => {
         const bgColor = dueDateBackground(t.dueDate ? new Date(t.dueDate) : undefined)
+        const dueDate = t.dueDate ? format(new Date(t.dueDate), "EEEE do, MMM yyyy") :  ""
+        const dueDateRelative = t.dueDate ? `(${formatDistanceToNow(new Date(t.dueDate), { addSuffix: true })})` :  ""
 
         return <TableRow key={t.id} className={`${bgColor}`}>
           <TableCell><Checkbox data-testid={`todo-check-${t.id}`} defaultSelected={t.done} isSelected={t.done} onValueChange={(newValue) => updateStatus(t, newValue)} /></TableCell>
           <TableCell className={`${t.done ? "line-through" : ""}`}>{t.text}</TableCell>
-          <TableCell>{t.priority}</TableCell>
-          <TableCell>{t.dueDate?.toString()}</TableCell>
+          <TableCell><PriorityLabel priority={t.priority} /> </TableCell>
+          <TableCell>{`${dueDate} ${dueDateRelative}`}</TableCell>
           <TableCell>
             <EditTodo todo={t} onEdit={(todo) => onUpdate([todo], "whole")} />
             <DeleteTodo todo={t} onDelete={(todo) => onUpdate([todo], "delete")} />
