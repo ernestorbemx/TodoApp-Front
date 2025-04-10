@@ -29,15 +29,16 @@ export interface TodoFiltersProps {
 export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
     const [filter, setFilter] = useState<TodoFilter>({})
 
-    return <Card className="p-4">
+    return <Card className="p-4 gap-4">
+        <h3 className="text-left font-bold text-lg">Filters</h3>
         <div className="flex gap-8 items-center ">
-            <label className="w-16 text-left flex-shrink-0">Text</label>
+            <label className="w-16 text-left flex-shrink-0 font-semibold">Text</label>
             <Input data-testid="text-filter" label="Text search" placeholder="Write a text the todo must contain" onValueChange={(text) => {
                 setFilter(f => ({ ...f, text: text }))
             }}></Input>
         </div>
         <div className="flex gap-8 items-center  ">
-            <label className="w-16 text-left flex-shrink-0">Priority</label>
+            <label className="w-16 text-left flex-shrink-0 font-semibold">Priority</label>
             <Select
                 data-testid="priority-filter"
                 size="sm"
@@ -53,7 +54,7 @@ export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
             </Select>
         </div>
         <div className="flex gap-8 items-center ">
-            <label className="w-16 text-left flex-shrink-0">State</label>
+            <label className="w-16 text-left flex-shrink-0 font-semibold">State</label>
             <Select
                 data-testid="status-filter"
                 size="sm"
@@ -68,6 +69,6 @@ export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
                 {(state: typeof states[0]) => <SelectItem key={String(state.value)}>{state.label}</SelectItem>}
             </Select>
         </div>
-        <Button data-testid="filters-button" onPress={() => onChange(filter)} isLoading={searching}>Search</Button>
+        <Button color="primary" data-testid="filters-button" onPress={() => onChange(filter)} isLoading={searching}>Search</Button>
     </Card >
 }
