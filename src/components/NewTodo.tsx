@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
-import { useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
-import { TodoForm, TodoFormProps, TodoFormSchema } from "./TodoForm";
+import { useDisclosure, Modal, ModalContent } from "@heroui/modal";
+import { TodoForm, TodoFormSchema } from "./TodoForm";
 import { useCallback, useState } from "react";
 import { createTodo } from "../http/todo";
 import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
@@ -53,7 +53,7 @@ export function NewTodo({ onNew }: NewTodoProps) {
     .finally(() => {
       setLoading(false)
     })
-  }, [])
+  }, [onClose, onNew])
 
   return (
     <div className="flex w-full justify-start">

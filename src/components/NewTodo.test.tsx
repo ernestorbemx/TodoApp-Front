@@ -1,13 +1,12 @@
 import { render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { TodoForm, TodoFormSchema } from "./TodoForm";
+import { TodoFormSchema } from "./TodoForm";
 import userEvent from "@testing-library/user-event";
-import { Todo } from "../types";
 import { createTodo } from "../http/todo";
 import { parseDateTime } from "@internationalized/date";
 import { NewTodo } from "./NewTodo";
 
-vi.mock('./TodoForm', (actualImport) => ({
+vi.mock('./TodoForm', () => ({
     TodoForm: vi.fn(({ onChange }: { onChange: (todo: TodoFormSchema) => unknown }) => <><p>Mocked Todo Form</p><button onClick={() => onChange({
         text: 'Finish the project report',
         priority: 'HIGH',
@@ -15,7 +14,7 @@ vi.mock('./TodoForm', (actualImport) => ({
     })} >Click</button></>)
 }))
 
-vi.mock('../http/todo', (actualImport) => ({
+vi.mock('../http/todo', () => ({
     createTodo: vi.fn(() => Promise.resolve({
         status: 200, data: {
             id: 1,
@@ -28,8 +27,6 @@ vi.mock('../http/todo', (actualImport) => ({
     }))
 }))
 
-const MockedTodoForm = vi.mocked(TodoForm)
-
 const mockedCreateTodo = vi.mocked(createTodo)
 
 
@@ -38,15 +35,6 @@ describe("test NewTodo component", () => {
     afterEach(() => {
         vi.clearAllMocks();
     })
-
-    const todo: Todo = {
-        id: 1,
-        text: 'Finish the project report',
-        done: false,
-        priority: 'HIGH',
-        creationDate: '2025-04-08T08:00:00Z',
-        dueDate: '2025-04-10T17:00:00Z'
-    };
 
     it("should render", () => {
         const wrapper = render(

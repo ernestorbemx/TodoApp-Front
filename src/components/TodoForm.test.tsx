@@ -1,8 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi} from "vitest";
+import { describe, expect, it, vi} from "vitest";
 import { TodoForm } from "./TodoForm";
 import { Modal } from "@heroui/modal";
-import userEvent, { UserEvent } from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 
 
 describe("test TodoForm component", () => {

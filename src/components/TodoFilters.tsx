@@ -6,14 +6,14 @@ import { TodoFilter } from "../types";
 import { useState } from "react";
 import { Button } from "@heroui/button";
 
-export const states: { label: string, value: boolean | '' }[] = [
+const states: { label: string, value: boolean | '' }[] = [
     { label: "All", value: '' },
     { label: "Done", value: true },
     { label: "Undone", value: false },
 ]
 
 
-export const priorities: { label: string, value: Priority | '' }[] = [
+const priorities: { label: string, value: Priority | '' }[] = [
     { label: "All", value: '' },
     { label: "High", value: "HIGH" },
     { label: "Medium", value: "MEDIUM" },

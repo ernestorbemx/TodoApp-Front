@@ -7,7 +7,7 @@ import userEvent, { UserEvent } from "@testing-library/user-event";
 import { EditTodo } from "./EditTodo";
 import { DeleteTodo } from "./DeleteTodo";
 
-vi.mock("../http/todo", (original) => ({
+vi.mock("../http/todo", () => ({
     changeStatus: vi.fn(() => Promise.resolve({
         status: 200,
         data: {
@@ -22,12 +22,12 @@ vi.mock("../http/todo", (original) => ({
 }))
 
 
-vi.mock("./EditTodo", (original) => ({
+vi.mock("./EditTodo", () => ({
     EditTodo: vi.fn(() => <p>Mocked EditTodo</p>)
 }))
 
 
-vi.mock("./DeleteTodo", (original) => ({
+vi.mock("./DeleteTodo", () => ({
     DeleteTodo: vi.fn(() => <p>Mocked EditTodo</p>)
 }))
 

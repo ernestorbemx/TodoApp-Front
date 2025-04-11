@@ -46,7 +46,7 @@ export function DeleteTodo({ todo, onDelete: onEdit }: DeleteTodoProps) {
       .finally(() => {
         setLoading(false)
       })
-  }, [todo, setLoading, onEdit, onClose, addToast])
+  }, [todo, setLoading, onEdit, onClose])
   return (
     <>
       <Button data-testid="delete-button" className="" variant="solid" color="danger" onPress={onOpen}>Delete</Button>

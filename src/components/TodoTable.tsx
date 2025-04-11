@@ -20,10 +20,8 @@ export interface TodoTableProps {
 
 
 export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTableProps) {
-  // const [data,setData] = useState()
   const [data, setData] = useState<Todo[]>()
   const [checked, setChecked] = useState(false)
-  const [sorting, setSorting] = useState<string>("")
 
   useEffect(() => {
     setData(dataProps)
@@ -62,7 +60,7 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
         description: "Plese try again later."
       })
     })
-      .catch((e) => {
+      .catch(() => {
         addToast({
           color: "warning",
           title: `To-do couldn't created`,
@@ -95,7 +93,7 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
         description: "Plese try again later."
       })
     })
-      .catch((e) => {
+      .catch(() => {
         addToast({
           color: "warning",
           title: `To-do couldn't updated`,
@@ -119,13 +117,11 @@ export function TodoTable({ data: dataProps, onSortingChange, onUpdate }: TodoTa
       <TableColumn>
         <SortField ascending={true} onChange={(ascending) => {
           const sorting = `${ascending ? "" : "-"}priority`;
-          setSorting(sorting)
           onSortingChange(sorting)
         }}>Priority</SortField>
       </TableColumn>
       <TableColumn><SortField ascending={true} onChange={(ascending) => {
         const sorting = `${ascending ? "" : "-"}dueDate`;
-        setSorting(sorting)
         onSortingChange(sorting)
       }}>Due Date</SortField></TableColumn>
       <TableColumn>Actions</TableColumn>
