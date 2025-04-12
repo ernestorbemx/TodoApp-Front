@@ -51,8 +51,8 @@ export function TodoTable({
         if (res.every((r) => r.status == 200)) {
           addToast({
             color: "success",
-            title: `To-do's updated`,
-            description: "You can now refresh the table",
+            title: `To-do's status updated sucessfully`,
+            description: `Todo's are now marked as ${newStatus ? "done" : "undone"}`,
           });
           setData(
             data?.map((t) => {
@@ -81,7 +81,7 @@ export function TodoTable({
       .catch(() => {
         addToast({
           color: "warning",
-          title: `To-do couldn't created`,
+          title: `To-do couldn't updated`,
           description: "Plese try again later.",
         });
       })
@@ -95,7 +95,7 @@ export function TodoTable({
           addToast({
             color: "success",
             title: `To-do's ${todo.text} updated`,
-            description: "You can now refresh the table",
+            description: `New status is ${newStatus ? "done" : "undone"}`,
           });
           setData(
             data?.map((t) => {

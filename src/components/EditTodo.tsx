@@ -29,8 +29,8 @@ export function EditTodo({ todo, onEdit }: EditTodoProps) {
           if (res.status == 200) {
             addToast({
               color: "success",
-              title: `To-do "${todoData.text.substring(0, 10)}..." edited`,
-              description: "You can now refresh the table",
+              title: `To-do edited successfully`,
+              description: `"${todoData.text.substring(0, 10)}..." edited`,
             });
             onClose();
             onEdit?.(res.data!);

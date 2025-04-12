@@ -28,8 +28,8 @@ export function DeleteTodo({ todo, onDelete: onEdit }: DeleteTodoProps) {
         if (res.status == 200) {
           addToast({
             color: "success",
-            title: `To-do "${todo.text.substring(0, 10)}..." deleted`,
-            description: "You can now refresh the table",
+            title: `To-do deleted successfully`,
+            description: `"${todo.text.substring(0, 10)}..." deleted`,
           });
           onClose();
           onEdit?.(res.data!);

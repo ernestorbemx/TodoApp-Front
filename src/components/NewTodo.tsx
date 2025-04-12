@@ -29,8 +29,8 @@ export function NewTodo({ onNew }: NewTodoProps) {
           if (res.status == 200) {
             addToast({
               color: "success",
-              title: `To-do "${todo.text.substring(0, 10)}..." created`,
-              description: "You can now refresh the table",
+              title: `To-do created successfully`,
+              description: `"${todo.text.substring(0, 10)}..." created`,
             });
             onNew(res.data);
             setTodo(undefined);
