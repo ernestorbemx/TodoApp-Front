@@ -6,14 +6,14 @@ import { useTheme } from "@heroui/use-theme";
 import { Moon, Sun } from "lucide-react";
 
 export const ThemeSwitcher = () => {
-    const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
-    return (
-        <div>
-            <span className="hidden">
-                The current theme is: {theme}
-            </span>
-            <Button onPress={() => setTheme(theme == "dark" ? 'light' : "dark")}>{theme == "light" ? <Moon /> : <Sun />} </Button>
-        </div>
-    )
+  return (
+    <div>
+      <span className="hidden">The current theme is: {theme}</span>
+      <Button onPress={() => setTheme(theme == "dark" ? "light" : "dark")}>
+        {theme == "light" ? <Moon /> : <Sun />}{" "}
+      </Button>
+    </div>
+  );
 };
