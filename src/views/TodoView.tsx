@@ -66,7 +66,7 @@ export function TodoView() {
 
     useEffect(() => {
         fetchStats();
-    }, [filters, page, sorting])
+    }, [fetchStats])
 
 
     return <div className="w-full flex flex-col gap-4">

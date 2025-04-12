@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { Stats,  } from "../types";
-import userEvent, { UserEvent } from "@testing-library/user-event";
 import { TodoStats } from "./TodoStats";
 import { formatTime } from "../utils";
 
@@ -11,11 +10,7 @@ vi.mock('../utils', { spy: true })
 
 describe("test TodoStats component and formatTime", () => {
 
-    let user: UserEvent;
-
-    beforeEach(() => {
-        user = userEvent.setup();
-    });
+   
 
     afterEach(() => {
         vi.clearAllMocks();

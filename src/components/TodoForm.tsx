@@ -20,7 +20,7 @@ const schema = yup
     .required()
 
 
-export interface TodoFormSchema extends yup.InferType<typeof schema> { }
+export type TodoFormSchema = yup.InferType<typeof schema>
 
 export interface TodoFormProps {
     loading: boolean;
@@ -31,7 +31,7 @@ export interface TodoFormProps {
     onClose: () => unknown;
 }
 
-export const priorities: { label: string, value: Priority }[] = [
+const priorities: { label: string, value: Priority }[] = [
     { label: "High", value: "HIGH" },
     { label: "Medium", value: "MEDIUM" },
     { label: "Low", value: "LOW" },
@@ -63,7 +63,7 @@ export function TodoForm({ loading, todo, onChange, label, onClose }: TodoFormPr
             ...todo,
             dueDate: todo?.dueDate ? parseDateTime(todo.dueDate) : undefined
         })
-    }, [todo])
+    }, [todo, reset])
 
     return <>
         <ModalHeader className="flex flex-col gap-1">{label}</ModalHeader>

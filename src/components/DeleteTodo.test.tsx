@@ -5,7 +5,7 @@ import { Todo } from "../types";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import { deleteTodo } from "../http/todo";
 
-vi.mock("../http/todo", (original) => ({
+vi.mock("../http/todo", () => ({
     deleteTodo: vi.fn(() => Promise.resolve({
         status: 200,
         data: {

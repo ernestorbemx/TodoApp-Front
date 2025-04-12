@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 import { TodoView } from "./TodoView"
 import { Stats } from "../types"
 
-vi.mock("../http/todo", (actualImport) => {
+vi.mock("../http/todo", () => {
     return ({
         getTodos: () => Promise.resolve({status: 200, data: []}),
         getSTats: () => Promise.resolve({ avg: 20, highPriorityAvg: 10, lowPriorityAvg:20,mediumPriorityAvg:30 } as Stats)
@@ -11,7 +11,7 @@ vi.mock("../http/todo", (actualImport) => {
 })
 
 
-vi.mock("../components/ThemeSwitcher", (actualImport) => {
+vi.mock("../components/ThemeSwitcher", () => {
     return ({
         ThemeSwitcher: () => <p>Mocked Theme Switcher</p>
     })
