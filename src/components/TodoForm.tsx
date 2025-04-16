@@ -141,9 +141,15 @@ export function TodoForm({
                   isInvalid={invalid}
                   errorMessage={error?.message}
                 />
-                <Button color="danger" variant="flat" isDisabled={!value} onPress={() => setValue("dueDate", null)}>Clear</Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  isDisabled={!value}
+                  onPress={() => setValue("dueDate", null)}
+                >
+                  Clear
+                </Button>
               </>
-
             )}
           />
         </div>
