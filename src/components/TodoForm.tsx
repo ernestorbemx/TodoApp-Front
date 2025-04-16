@@ -15,7 +15,7 @@ const schema = yup
   .object({
     text: yup.string().max(1).max(120).required(),
     priority: yup.string().oneOf(["LOW", "MEDIUM", "HIGH"]).required(),
-    dueDate: yup.object().optional(),
+    dueDate: yup.object().nullable().optional(),
   })
   .required();
 
@@ -43,7 +43,7 @@ export function TodoForm({
   label,
   onClose,
 }: TodoFormProps) {
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, setValue } = useForm({
     reValidateMode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
@@ -92,28 +92,6 @@ export function TodoForm({
           )}
         />
         <Controller
-          name="dueDate"
-          control={control}
-          render={({
-            field: { onChange, value, onBlur },
-            fieldState: { error, invalid },
-          }) => (
-            <DatePicker
-              granularity="minute"
-              defaultValue={value as ZonedDateTime}
-              data-testid=""
-              className="max-w-[284px]"
-              label="Due date"
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value as ZonedDateTime}
-              isInvalid={invalid}
-              errorMessage={error?.message}
-            />
-          )}
-        />
-
-        <Controller
           name="priority"
           control={control}
           render={({
@@ -142,6 +120,33 @@ export function TodoForm({
             </Select>
           )}
         />
+        <div className="flex items-center gap-x-2">
+          <Controller
+            name="dueDate"
+            control={control}
+            render={({
+              field: { onChange, value, onBlur },
+              fieldState: { error, invalid },
+            }) => (
+              <>
+                <DatePicker
+                  granularity="minute"
+                  defaultValue={value as ZonedDateTime}
+                  data-testid=""
+                  className="max-w-[284px]"
+                  label="Due date"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value as ZonedDateTime}
+                  isInvalid={invalid}
+                  errorMessage={error?.message}
+                />
+                <Button color="danger" variant="flat" isDisabled={!value} onPress={() => setValue("dueDate", null)}>Clear</Button>
+              </>
+
+            )}
+          />
+        </div>
       </ModalBody>
       <ModalFooter>
         <Button
