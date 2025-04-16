@@ -64,7 +64,7 @@ export function EditTodo({ todo, onEdit }: EditTodoProps) {
         color="primary"
         onPress={onOpen}
       >
-        Edit Todo
+        Edit
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
