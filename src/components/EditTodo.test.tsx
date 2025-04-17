@@ -62,7 +62,7 @@ describe("test EditTodo component", () => {
 
   it("should render", () => {
     const wrapper = render(<EditTodo todo={todo} />);
-    expect(wrapper.findByText("Edit todo")).toBeDefined();
+    expect(wrapper.findByText("Edit")).toBeDefined();
   });
 
   it("should call render TodoForm when button click", async () => {
