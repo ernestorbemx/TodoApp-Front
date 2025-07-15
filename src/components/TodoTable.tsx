@@ -14,9 +14,8 @@ import { SortField } from "./SortField";
 import { useEffect, useState } from "react";
 import { EditTodo } from "./EditTodo";
 import { DeleteTodo } from "./DeleteTodo";
-import { dueDateBackground } from "../utils";
 import { PriorityLabel } from "./PriorityLabel";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatTodoColumns } from "../utils";
 
 export interface TodoTableProps {
   data: Todo[];
@@ -29,7 +28,7 @@ export function TodoTable({
   onSortingChange,
   onUpdate,
 }: TodoTableProps) {
-  const [data, setData] = useState<Todo[]>();
+  const [data, setData] = useState<Todo[]>([]);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
@@ -37,91 +36,120 @@ export function TodoTable({
   }, [dataProps]);
 
   useEffect(() => {
-    if (!data) {
+    if (!data || data.length === 0) {
+      // If data is empty, reset the checked state
+      // This ensures that the checkbox reflects the empty state correctly
       setChecked(false);
       return;
     }
     setChecked(data.length != 0 && data.every((t) => t.done));
   }, [data]);
 
-  const updateAllStatus = (newStatus: boolean) => {
-    const todosToUpdate = dataProps.filter((t) => t.done != newStatus);
-    Promise.all(todosToUpdate.map((t) => changeStatus(t.id, newStatus)))
+  const updateAllStatusState = (newStatus: boolean) => {
+    const oldData = [...data];
+    const updatedData = data?.map((t) => ({ ...t, done: newStatus }));
+    setData(updatedData);
+    return oldData;
+  };
+
+  const updateAllStatusHttp = async (newStatus: boolean, oldData: Todo[]) => {
+    const todosToUpdate = dataProps.filter((t) => t.done !== newStatus);
+    return Promise.all(todosToUpdate.map((t) => changeStatus(t.id, newStatus)))
       .then((res) => {
-        if (res.every((r) => r.status == 200)) {
+        if (res.every((r) => r.status === 200)) {
           addToast({
             color: "success",
-            title: `To-do's status updated sucessfully`,
+            title: `To-do's status updated successfully`,
             description: `Todo's are now marked as ${newStatus ? "done" : "undone"}`,
           });
           setData(
             data?.map((t) => {
-              if (todosToUpdate.find((t2) => t2.id != t.id)) {
+              if (todosToUpdate.find((t2) => t2.id !== t.id)) {
                 return { ...t };
               }
               return { ...t, done: newStatus };
-            }),
+            })
           );
           onUpdate(
             res.map((r) => r.data!),
-            "status",
+            "status"
           );
           return;
         }
         onUpdate(
-          res.filter((r) => r.status == 200).map((r) => r.data!),
-          "status",
+          res.filter((r) => r.status === 200).map((r) => r.data!),
+          "status"
         );
         addToast({
           color: "warning",
           title: `Not all to-do could be updated`,
-          description: "Plese try again later.",
+          description: "Please try again later.",
         });
       })
       .catch(() => {
         addToast({
           color: "warning",
-          title: `To-do couldn't updated`,
-          description: "Plese try again later.",
+          title: `To-do couldn't be updated`,
+          description: "Please try again later.",
         });
-      })
-      .finally(() => {});
+        setData(oldData); // Revert to old data on error
+      });
   };
 
-  const updateStatus = (todo: Todo, newStatus: boolean) => {
-    changeStatus(todo.id, newStatus)
+  const updateAllStatus = (newStatus: boolean) => {
+    const oldData = updateAllStatusState(newStatus);
+    updateAllStatusHttp(newStatus, oldData);
+  };
+
+  const updateStatusState = (todo: Todo, newStatus: boolean) => {
+    const oldData = [...data];
+    setData(
+      data?.map((t) => {
+        if (todo.id !== t.id) {
+          return { ...t };
+        }
+        return { ...t, done: newStatus };
+      })
+    );
+    return oldData;
+  };
+
+  const updateStatusHttp = (
+    todo: Todo,
+    newStatus: boolean,
+    oldData: Todo[]
+  ) => {
+    return changeStatus(todo.id, newStatus)
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           addToast({
             color: "success",
             title: `To-do's ${todo.text} updated`,
             description: `New status is ${newStatus ? "done" : "undone"}`,
           });
-          setData(
-            data?.map((t) => {
-              if (todo.id != t.id) {
-                return { ...t };
-              }
-              return { ...t, done: newStatus };
-            }),
-          );
           onUpdate([res.data!], "status");
           return;
         }
         addToast({
           color: "warning",
           title: `To-do could not be updated`,
-          description: "Plese try again later.",
+          description: "Please try again later.",
         });
+        setData(oldData); // Revert to old data on failure
       })
       .catch(() => {
         addToast({
           color: "warning",
-          title: `To-do couldn't updated`,
-          description: "Plese try again later.",
+          title: `To-do couldn't be updated`,
+          description: "Please try again later.",
         });
-      })
-      .finally(() => {});
+        setData(oldData); // Revert to old data on error
+      });
+  };
+
+  const updateStatus = (todo: Todo, newStatus: boolean) => {
+    const oldData = updateStatusState(todo, newStatus);
+    updateStatusHttp(todo, newStatus, oldData);
   };
 
   return (
@@ -135,8 +163,9 @@ export function TodoTable({
             }
             isSelected={checked}
             onValueChange={(selected) => {
-              updateAllStatus(selected);
+              // Optimistic update
               setChecked(selected);
+              updateAllStatus(selected);
             }}
           />
         </TableColumn>
@@ -168,15 +197,7 @@ export function TodoTable({
       <TableBody>
         {data ? (
           data.map((t) => {
-            const bgColor = dueDateBackground(
-              t.dueDate ? new Date(t.dueDate) : undefined,
-            );
-            const dueDate = t.dueDate
-              ? format(new Date(t.dueDate), "EEEE do, MMM yyyy")
-              : "";
-            const dueDateRelative = t.dueDate
-              ? `(${formatDistanceToNow(new Date(t.dueDate), { addSuffix: true })})`
-              : "";
+            const { bgColor, dueDate, dueDateRelative } = formatTodoColumns(t);
 
             return (
               <TableRow key={t.id} className={`${bgColor}`}>
@@ -192,7 +213,7 @@ export function TodoTable({
                   {t.text}
                 </TableCell>
                 <TableCell>
-                  <PriorityLabel priority={t.priority} />{" "}
+                  <PriorityLabel priority={t.priority} />
                 </TableCell>
                 <TableCell>{`${dueDate} ${dueDateRelative}`}</TableCell>
                 <TableCell>

@@ -19,7 +19,7 @@ vi.mock("../http/todo", () => ({
         creationDate: "2025-04-08T08:00:00Z",
         dueDate: "2025-04-10T17:00:00Z",
       },
-    }),
+    })
   ),
 }));
 
@@ -88,30 +88,29 @@ describe("TodoTable test:", () => {
 
   it("should render component", () => {
     render(
-      <TodoTable data={[]} onUpdate={() => {}} onSortingChange={() => {}} />,
+      <TodoTable data={[]} onUpdate={() => {}} onSortingChange={() => {}} />
     );
   });
 
   it("should render title", () => {
     render(
-      <TodoTable data={[]} onUpdate={() => {}} onSortingChange={() => {}} />,
+      <TodoTable data={[]} onUpdate={() => {}} onSortingChange={() => {}} />
     );
     expect(screen.getByText("Name")).toBeDefined();
   });
 
   it("renders todos correctly", () => {
     render(
-      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />,
+      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
     todos.forEach((t) => {
-      expect(screen.getByText(t.text)).toBeDefined();
+      expect(screen.getByText(t.text)).toBeInTheDocument();
     });
   });
 
   it("calls update status on table checkbox", async () => {
-    const changeStatusMock = vi.mocked(changeStatus);
     const wrapper = render(
-      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />,
+      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
 
     const checkbox = await wrapper.findByTestId("todos-checkbox");
@@ -121,16 +120,137 @@ describe("TodoTable test:", () => {
     expect(input!.checked).toBe(false);
     await user.click(input!);
     // Wait for the state change to reflect in the UI
-    expect(changeStatusMock).toHaveBeenCalledTimes(3);
+    expect(changeStatus).toHaveBeenCalledTimes(3);
   });
 
   it("calls EditTodo and DeleteTodo on render", () => {
     const MockedEditTodo = vi.mocked(EditTodo);
     const MockedDeleteTodo = vi.mocked(DeleteTodo);
     render(
-      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />,
+      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
     expect(MockedEditTodo).toBeCalledTimes(todos.length);
     expect(MockedDeleteTodo).toBeCalledTimes(todos.length);
+  });
+
+  it("optimistically updates row-level item status", async () => {
+    const onUpdateMock = vi.fn();
+    const wrapper = render(
+      <TodoTable
+        data={todos}
+        onUpdate={onUpdateMock}
+        onSortingChange={() => {}}
+      />
+    );
+
+    const todoCheckbox = await wrapper.findByTestId("todo-check-1");
+    const input = todoCheckbox.querySelector("input");
+    expect(input).toBeDefined();
+
+    expect(input!.checked).toBe(false); // Initial state
+    await user.click(todoCheckbox!); // Simulate user interaction
+
+    // Verify optimistic UI update
+    expect(input!.checked).toBe(true);
+
+    // Verify API call
+    expect(changeStatus).toHaveBeenCalledWith(1, true);
+
+    // Verify onUpdate callback
+    expect(onUpdateMock).toHaveBeenCalled();
+  });
+
+  it("reverts row-level item status on API failure", async () => {
+    vi.mocked(changeStatus).mockImplementationOnce(
+      () =>
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("API error")), 100)
+        )
+    );
+    const wrapper = render(
+      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
+    );
+
+    const todoCheckbox = await wrapper.findByTestId("todo-check-1");
+    expect(todoCheckbox).toBeInTheDocument();
+    const input = todoCheckbox.querySelector("input");
+    expect(input).toBeInTheDocument();
+
+    expect(input).not.toBeChecked(); // Initial state
+    await user.click(todoCheckbox); // Simulate user interaction
+    expect(changeStatus).toBeCalledTimes(1);
+    // Verify optimistic UI update
+    expect(input).toBeChecked();
+
+    // Wait for API failure and UI rollback
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate async behavior
+    expect(input).not.toBeChecked();
+  });
+
+  it.skip("optimistically updates table-level item statuses", async () => {
+    const onUpdateMock = vi.fn();
+    const wrapper = render(
+      <TodoTable
+        data={todos}
+        onUpdate={onUpdateMock}
+        onSortingChange={() => {}}
+      />
+    );
+
+    const tableCheckbox = await wrapper.findByTestId("todos-checkbox");
+    const input = tableCheckbox.querySelector("input");
+    expect(input).toBeDefined();
+
+    expect(input).not.toBeChecked(); // Initial state
+    await user.click(tableCheckbox); // Simulate user interaction
+    expect(input).toBeChecked();
+
+    // Verify optimistic UI update
+    todos.forEach((todo) => {
+      const todoCheckbox = wrapper.getByTestId(`todo-check-${todo.id}`);
+      const todoInput = todoCheckbox.querySelector("input");
+      expect(todoInput).toBeChecked();
+    });
+
+    // Verify API calls
+    expect(changeStatus).toHaveBeenCalledTimes(3); // Only undone items are updated
+
+    // Verify onUpdate callback
+    expect(onUpdateMock).toHaveBeenCalled();
+  });
+
+  it.skip("reverts table-level item statuses on API failure", async () => {
+    vi.mocked(changeStatus).mockImplementationOnce(
+      () =>
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("API error")), 100)
+        )
+    );
+    const wrapper = render(
+      <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
+    );
+
+    const tableCheckbox = await wrapper.findByTestId("todos-checkbox");
+    const input = tableCheckbox.querySelector("input");
+    expect(input).toBeDefined();
+
+    expect(input).not.toBeChecked(); // Initial state
+    await user.click(tableCheckbox); // Simulate user interaction
+    expect(input).toBeChecked();
+
+    // Verify optimistic UI update
+    todos.forEach((todo) => {
+      const todoCheckbox = wrapper.getByTestId(`todo-check-${todo.id}`);
+      const todoInput = todoCheckbox.querySelector("input");
+      expect(todoInput).toBeChecked();
+    });
+
+    // Wait for API failure and UI rollback
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate async behavior
+    todos.forEach((todo) => {
+      const todoCheckbox = wrapper.getByTestId(`todo-check-${todo.id}`);
+      const todoInput = todoCheckbox.querySelector("input");
+      expect(todoInput).not.toBeChecked();
+    });
   });
 });

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { dueDateBackground, formatTime } from ".";
+import { dueDateBackground, formatTime, formatTodoColumns } from ".";
+import { Todo } from "../types";
 
 describe("utils.ts", () => {
   describe("formatTime()", () => {
@@ -14,27 +15,58 @@ describe("utils.ts", () => {
     it("should return background colors correspondingly", () => {
       expect(dueDateBackground()).toBe("bg-transparent dark:text-white");
       expect(dueDateBackground(new Date(Date.now()))).toBe(
-        "bg-red-200 dark:bg-red-400 dark:text-black",
+        "bg-red-200 dark:bg-red-400 dark:text-black"
       ); // less than or equal one week
       expect(
-        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)),
+        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7))
       ).toBe("bg-red-200 dark:bg-red-400 dark:text-black"); // less than or equal one week
       expect(
-        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 + 1)),
+        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 + 1))
       ).toBe("bg-yellow-200 dark:bg-yellow-400 dark:text-black"); // one week and less than or equal two weeks
       expect(
         dueDateBackground(
-          new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 - 1),
-        ),
+          new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 - 1)
+        )
       ).toBe("bg-yellow-200 dark:bg-yellow-400 dark:text-black"); // one week and less than or equal two weeks
       expect(
         dueDateBackground(
-          new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 + 1),
-        ),
+          new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 + 1)
+        )
       ).toBe("bg-green-200 dark:bg-green-400 dark:text-black"); // more than two weeks
       expect(
-        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 3)),
+        dueDateBackground(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 3))
       ).toBe("bg-green-200 dark:bg-green-400 dark:text-black"); // more than two weeks
+    });
+  });
+
+  describe("formatTodoColumns()", () => {
+    it("should format todo columns correctly", () => {
+      const todoWithoutDueDate: Partial<Todo> = {};
+      expect(formatTodoColumns(todoWithoutDueDate)).toEqual({
+        bgColor: "bg-transparent dark:text-white",
+        dueDate: "",
+        dueDateRelative: "",
+      });
+
+      const todoWithDueDateToday = {
+        dueDate: new Date(Date.now()).toISOString(),
+      };
+      expect(formatTodoColumns(todoWithDueDateToday)).toEqual({
+        bgColor: "bg-red-200 dark:bg-red-400 dark:text-black",
+        dueDate: expect.any(String), // formatted date string
+        dueDateRelative: expect.stringContaining("ago"), // relative time string
+      });
+
+      const todoWithDueDateInTwoWeeks = {
+        dueDate: new Date(
+          Date.now() + 1000 * 60 * 60 * 24 * 7 * 2
+        ).toISOString(),
+      };
+      expect(formatTodoColumns(todoWithDueDateInTwoWeeks)).toEqual({
+        bgColor: "bg-yellow-200 dark:bg-yellow-400 dark:text-black",
+        dueDate: expect.any(String),
+        dueDateRelative: expect.stringContaining("in"),
+      });
     });
   });
 });

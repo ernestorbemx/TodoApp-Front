@@ -1,3 +1,6 @@
+import { format, formatDistanceToNow } from "date-fns";
+import { Todo } from "../types";
+
 export function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const secondsRemaining = seconds % 60;
@@ -18,4 +21,18 @@ export function dueDateBackground(dueDate?: Date) {
     return "bg-yellow-200 dark:bg-yellow-400 dark:text-black";
   }
   return "bg-red-200 dark:bg-red-400 dark:text-black"; // One week between
+}
+
+export function formatTodoColumns(todo: Partial<Todo>) {
+  const bgColor = dueDateBackground(
+    todo.dueDate ? new Date(todo.dueDate) : undefined
+  );
+  const dueDate = todo.dueDate
+    ? format(new Date(todo.dueDate), "EEEE do, MMM yyyy")
+    : "";
+  const dueDateRelative = todo.dueDate
+    ? `(${formatDistanceToNow(new Date(todo.dueDate), { addSuffix: true })})`
+    : "";
+
+  return { bgColor, dueDate, dueDateRelative };
 }
