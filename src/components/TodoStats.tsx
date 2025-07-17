@@ -29,7 +29,7 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
               Average time to complete by <b>priority</b>:
             </h5>
             <div className="flex flex-col gap-1">
-              <p>
+              <div>
                 <PriorityLabel priority="HIGH"></PriorityLabel>{" "}
                 {data.lowPriorityAvg == -1 ? (
                   "No enough info available"
@@ -38,8 +38,8 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
                     {formatTime(data.lowPriorityAvg)} minutes
                   </span>
                 )}
-              </p>
-              <p>
+              </div>
+              <div>
                 <PriorityLabel priority="MEDIUM"></PriorityLabel>{" "}
                 {data.mediumPriorityAvg == -1 ? (
                   "No enough info available"
@@ -48,8 +48,8 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
                     {formatTime(data.mediumPriorityAvg)} minutes
                   </span>
                 )}
-              </p>
-              <p>
+              </div>
+              <div>
                 <PriorityLabel priority="LOW"></PriorityLabel>{" "}
                 {data.highPriorityAvg == -1 ? (
                   "No enough info available"
@@ -58,7 +58,7 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
                     {formatTime(data.highPriorityAvg)} minutes
                   </span>
                 )}
-              </p>
+              </div>
             </div>
           </div>
         </>
