@@ -22,7 +22,7 @@ describe("test TodoStats component and formatTime", () => {
   it("should render", () => {
     render(<TodoStats data={emptyStats} />);
     expect(
-      screen.getByText((t) => t.includes("Average time to complete by")),
+      screen.getByText((t) => t.includes("Average time to complete by"))
     ).toBeDefined();
   });
 
@@ -40,8 +40,35 @@ describe("test TodoStats component and formatTime", () => {
           lowPriorityAvg: 40,
           mediumPriorityAvg: 20,
         }}
-      />,
+      />
     );
     expect(formatTime).toHaveBeenCalledTimes(3);
+  });
+
+  it("should display the correct stats", () => {
+    const stats: Stats = {
+      avg: 10,
+      highPriorityAvg: 5,
+      lowPriorityAvg: 15,
+      mediumPriorityAvg: 20,
+    };
+    const { getByText } = render(<TodoStats data={stats} />);
+
+    expect(getByText(/00:10/)).toBeInTheDocument();
+    expect(getByText(/00:05/)).toBeInTheDocument();
+    expect(getByText(/00:15/)).toBeInTheDocument();
+    expect(getByText(/00:20/)).toBeInTheDocument();
+  });
+
+  it("should render a 'No enough info available' when avg are -1", () => {
+    const stats: Stats = {
+      avg: -1,
+      highPriorityAvg: -1,
+      lowPriorityAvg: -1,
+      mediumPriorityAvg: -1,
+    };
+    const { getAllByText } = render(<TodoStats data={stats} />);
+
+    expect(getAllByText(/No enough info available/i)).toHaveLength(4);
   });
 });

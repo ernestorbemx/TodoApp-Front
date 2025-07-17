@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { configDefaults } from "vitest/config";
 // In vitest.config.js add (if you haven't already)
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +13,15 @@ export default defineConfig({
     setupFiles: ["./vitest-setup.ts"],
     globals: true,
     environment: "jsdom",
+    coverage: {
+      exclude: [
+        ...configDefaults.exclude,
+        "*.config.js",
+        "types.ts",
+        "*.d.ts",
+        "src/main.tsx",
+      ],
+    },
     // ...
   },
 });

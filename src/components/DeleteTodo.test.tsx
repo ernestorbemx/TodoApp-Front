@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DeleteTodo } from "./DeleteTodo";
 import { Todo } from "../types";
@@ -17,7 +17,7 @@ vi.mock("../http/todo", () => ({
         creationDate: "2025-04-08T08:00:00Z",
         dueDate: "2025-04-10T17:00:00Z",
       },
-    }),
+    })
   ),
 }));
 
@@ -52,7 +52,7 @@ describe("test DeleteTodo component", () => {
     render(<DeleteTodo todo={todo} />);
     await user.click(screen.getByTestId("delete-button"));
     expect(
-      screen.getByText((t) => t.includes("Are you sure of deleting")),
+      screen.getByText((t) => t.includes("Are you sure of deleting"))
     ).toBeDefined();
   });
 
@@ -60,10 +60,30 @@ describe("test DeleteTodo component", () => {
     render(<DeleteTodo todo={todo} />);
     await user.click(screen.getByTestId("delete-button"));
     expect(
-      screen.getByText((t) => t.includes("Are you sure of deleting")),
+      screen.getByText((t) => t.includes("Are you sure of deleting"))
     ).toBeDefined();
 
     await user.click(screen.getByTestId("confirm-deletion-button"));
     expect(mockedDeleteTodo).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call onDelete when delete button is clicked", async () => {
+    const mockOnDelete = vi.fn();
+    const { getByText } = render(
+      <DeleteTodo todo={todo} onDelete={mockOnDelete} />
+    );
+
+    await userEvent.click(getByText("Delete"));
+    await userEvent.click(getByText("Confirm"));
+    expect(mockOnDelete).toHaveBeenCalled();
+  });
+
+  it("should render confirmation message before deletion", () => {
+    const { getByText } = render(
+      <DeleteTodo todo={todo} onDelete={() => {}} />
+    );
+    fireEvent.click(getByText("Delete"));
+
+    expect(getByText(/Are you sure of deleting the todo/i)).toBeInTheDocument();
   });
 });

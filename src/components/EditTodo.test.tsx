@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TodoFormSchema } from "./TodoForm";
 import userEvent from "@testing-library/user-event";
@@ -24,7 +24,7 @@ vi.mock("./TodoForm", () => ({
           Click
         </button>
       </>
-    ),
+    )
   ),
 }));
 
@@ -40,7 +40,7 @@ vi.mock("../http/todo", () => ({
         creationDate: "2025-04-08T08:00:00Z",
         dueDate: "2025-04-10T17:00:00Z",
       },
-    }),
+    })
   ),
 }));
 
@@ -85,5 +85,26 @@ describe("test EditTodo component", () => {
     await userEvent.click(await wrapper.findByText("Click"));
     expect(mockedEditTodo).toBeCalledTimes(1);
     expect(onEditFn).toBeCalledTimes(1);
+  });
+
+  it("should call onSave with updated todo details", async () => {
+    const mockOnEdit = vi.fn();
+    const { getByText, findByTestId } = render(
+      <EditTodo
+        todo={{ text: "Old Todo", priority: "LOW", id: 123, done: false }}
+        onEdit={mockOnEdit}
+      />
+    );
+    await userEvent.click(await findByTestId("edit-todo-button"));
+    await userEvent.click(getByText("Click"));
+
+    expect(mockOnEdit).toHaveBeenCalledWith({
+      id: 1,
+      text: "Finish the project report",
+      done: false,
+      priority: "high",
+      creationDate: "2025-04-08T08:00:00Z",
+      dueDate: "2025-04-10T17:00:00Z",
+    });
   });
 });
