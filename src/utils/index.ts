@@ -7,9 +7,19 @@ import { Todo } from "../types";
  * @returns A formatted time string.
  */
 export function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
+  const days = Math.floor(seconds / (60 * 60 * 24));
+  const hours = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((seconds % (60 * 60)) / 60);
   const secondsRemaining = seconds % 60;
-  return `${minutes.toString().padStart(2, "0")}:${secondsRemaining.toString().padStart(2, "0")}`;
+
+  return [
+    days > 0 ? `${days}d` : "",
+    hours > 0 ? `${hours}h` : "",
+    minutes > 0 ? `${minutes}m` : "",
+    `${secondsRemaining}s`,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 /**

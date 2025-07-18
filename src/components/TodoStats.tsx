@@ -30,7 +30,7 @@ export function TodoStats({ data }: TodoStatsProps) {
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.avg)} minutes
+                    {formatTime(data.avg)}
                   </span>
                 )}
               </p>
@@ -48,7 +48,7 @@ export function TodoStats({ data }: TodoStatsProps) {
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.highPriorityAvg)} minutes
+                    {formatTime(data.highPriorityAvg)}
                   </span>
                 )}
               </div>
@@ -59,7 +59,7 @@ export function TodoStats({ data }: TodoStatsProps) {
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.mediumPriorityAvg)} minutes
+                    {formatTime(data.mediumPriorityAvg)}
                   </span>
                 )}
               </div>
@@ -70,7 +70,7 @@ export function TodoStats({ data }: TodoStatsProps) {
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.lowPriorityAvg)} minutes
+                    {formatTime(data.lowPriorityAvg)}
                   </span>
                 )}
               </div>

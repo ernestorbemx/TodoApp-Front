@@ -8,9 +8,12 @@ describe("utils.ts", () => {
    */
   describe("formatTime()", () => {
     it("should format time correctly", () => {
-      expect(formatTime(60)).toBe("01:00");
-      expect(formatTime(621)).toBe("10:21");
-      expect(formatTime(59)).toBe("00:59");
+      expect(formatTime(60)).toBe("1m 0s");
+      expect(formatTime(621)).toBe("10m 21s");
+      expect(formatTime(59)).toBe("59s");
+      expect(formatTime(3662)).toBe("1h 1m 2s");
+      expect(formatTime(90061)).toBe("1d 1h 1m 1s");
+      expect(formatTime(0)).toBe("0s");
     });
   });
 

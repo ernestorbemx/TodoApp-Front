@@ -47,18 +47,18 @@ describe("TodoStats component tests", () => {
 
   it("should display the correct stats", () => {
     const stats: Stats = {
-      avg: 10,
-      highPriorityAvg: 5,
-      lowPriorityAvg: 15,
-      mediumPriorityAvg: 20,
+      avg: 90061, // 1d 1h 1m 1s
+      highPriorityAvg: 3662, // 1h 1m 2s
+      lowPriorityAvg: 63, // 1m 3s
+      mediumPriorityAvg: 9, // 9s
     };
     const { getByText } = render(<TodoStats data={stats} />);
 
     // Verify stats are displayed correctly
-    expect(getByText(/00:10/)).toBeInTheDocument();
-    expect(getByText(/00:05/)).toBeInTheDocument();
-    expect(getByText(/00:15/)).toBeInTheDocument();
-    expect(getByText(/00:20/)).toBeInTheDocument();
+    expect(getByText(/1d 1h 1m 1s/)).toBeInTheDocument();
+    expect(getByText(/1h 1m 2s/)).toBeInTheDocument();
+    expect(getByText(/1m 3s/)).toBeInTheDocument();
+    expect(getByText(/9s/)).toBeInTheDocument();
   });
 
   it("should render a 'No enough info available' when avg are -1", () => {
