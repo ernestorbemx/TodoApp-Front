@@ -7,15 +7,27 @@ import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
 import { addToast } from "@heroui/toast";
 import { Todo } from "../types";
 
+/**
+ * Props for the NewTodo component.
+ */
 export interface NewTodoProps {
+  /** Callback when a new todo is created. */
   onNew: (todo: Todo) => unknown;
 }
 
+/**
+ * Renders a button to create a new todo and a modal with a form.
+ * @param {NewTodoProps} props - Props for the NewTodo component.
+ */
 export function NewTodo({ onNew }: NewTodoProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [todo, setTodo] = useState<Partial<Todo>>();
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles the creation of a new todo.
+   * @param {TodoFormSchema} todo - The todo data from the form.
+   */
   const handleCreation = useCallback(
     (todo: TodoFormSchema) => {
       setTodo({});
@@ -54,7 +66,7 @@ export function NewTodo({ onNew }: NewTodoProps) {
           setLoading(false);
         });
     },
-    [onClose, onNew],
+    [onClose, onNew]
   );
 
   return (

@@ -17,12 +17,22 @@ import { DeleteTodo } from "./DeleteTodo";
 import { PriorityLabel } from "./PriorityLabel";
 import { formatTodoColumns } from "../utils";
 
+/**
+ * Props for the TodoTable component.
+ */
 export interface TodoTableProps {
+  /** Array of todos to display in the table. */
   data: Todo[];
+  /** Callback for sorting changes. */
   onSortingChange: (sortingField: string) => unknown;
+  /** Callback for updating todos (status, whole, or delete). */
   onUpdate: (todo: Todo[], type: "status" | "whole" | "delete") => unknown;
 }
 
+/**
+ * Renders a table displaying todos with sorting and update functionalities.
+ * @param {TodoTableProps} props - Props for the TodoTable component.
+ */
 export function TodoTable({
   data: dataProps,
   onSortingChange,
@@ -45,22 +55,34 @@ export function TodoTable({
     setChecked(data.length != 0 && data.every((t) => t.done));
   }, [data]);
 
+  /**
+   * Updates the state of all todos' status optimistically.
+   * @param {boolean} newStatus - The new status to apply to all todos.
+   * @returns {Todo[]} - The previous state of todos for rollback in case of failure.
+   */
   const updateAllStatusState = (newStatus: boolean) => {
-    const oldData = [...data];
-    const updatedData = data?.map((t) => ({ ...t, done: newStatus }));
-    setData(updatedData);
+    const oldData = [...data]; // Backup current state
+    const updatedData = data?.map((t) => ({ ...t, done: newStatus })); // Update all todos
+    setData(updatedData); // Apply optimistic update
     return oldData;
   };
 
+  /**
+   * Sends HTTP requests to update the status of all todos.
+   * Reverts state on failure.
+   * @param {boolean} newStatus - The new status to apply.
+   * @param {Todo[]} oldData - The previous state of todos for rollback.
+   */
   const updateAllStatusHttp = async (newStatus: boolean, oldData: Todo[]) => {
-    const todosToUpdate = dataProps.filter((t) => t.done !== newStatus);
+    const todosToUpdate = dataProps.filter((t) => t.done !== newStatus); // Filter todos needing update
     return Promise.all(todosToUpdate.map((t) => changeStatus(t.id, newStatus)))
       .then((res) => {
+        // Handle success and partial success
         if (res.every((r) => r.status === 200)) {
           addToast({
             color: "success",
             title: `To-do's status updated successfully`,
-            description: `Todo's are now marked as ${newStatus ? "done" : "undone"}`,
+            description: `Todos are now marked as ${newStatus ? "done" : "undone"}`,
           });
           setData(
             data?.map((t) => {
@@ -76,6 +98,7 @@ export function TodoTable({
           );
           return;
         }
+        // Handle partial success
         onUpdate(
           res.filter((r) => r.status === 200).map((r) => r.data!),
           "status"
@@ -87,6 +110,7 @@ export function TodoTable({
         });
       })
       .catch(() => {
+        // Handle failure
         addToast({
           color: "warning",
           title: `To-do couldn't be updated`,

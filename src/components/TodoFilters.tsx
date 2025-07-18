@@ -21,12 +21,21 @@ const priorities: { label: string; value: Priority | "" }[] = [
   { label: "Low", value: "LOW" },
 ];
 
+/**
+ * Props for the TodoFilters component.
+ */
 export interface TodoFiltersProps {
-  onChange: (filter: TodoFilter) => unknown; // Callback to handle filter changes
-  searching: boolean; // Indicates if a search operation is in progress
+  /** Indicates if the filters are in a searching state. */
+  searching: boolean;
+  /** Callback when filters are changed. */
+  onChange: (filters: TodoFilter) => unknown;
 }
 
-export function TodoFilters({ onChange, searching }: TodoFiltersProps) {
+/**
+ * Renders a set of filters for filtering todos.
+ * @param {TodoFiltersProps} props - Props for the TodoFilters component.
+ */
+export function TodoFilters({ searching, onChange }: TodoFiltersProps) {
   const [filter, setFilter] = useState<TodoFilter>({}); // State to store current filter values
 
   return (

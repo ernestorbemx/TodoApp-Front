@@ -12,6 +12,9 @@ import { vi, expect, test } from "vitest";
 
 vi.mock("./client");
 
+/**
+ * Tests the `getTodos` function to ensure it calls the correct endpoint.
+ */
 test("getTodos should call the correct endpoint", async () => {
   const mockResponse = { data: [], status: 200 };
   vi.mocked(http.get).mockResolvedValueOnce(mockResponse);
@@ -25,6 +28,9 @@ test("getTodos should call the correct endpoint", async () => {
   expect(result).toEqual(mockResponse);
 });
 
+/**
+ * Tests the `createTodo` function to ensure it posts to the correct endpoint.
+ */
 test("createTodo should post to the correct endpoint", async () => {
   const mockTodo: CreateTodo = { text: "Test Todo", priority: "HIGH" };
   const mockResponse = { data: mockTodo, status: 201 };
@@ -35,6 +41,9 @@ test("createTodo should post to the correct endpoint", async () => {
   expect(result).toEqual(mockResponse);
 });
 
+/**
+ * Tests the `editTodo` function to ensure it puts to the correct endpoint.
+ */
 test("editTodo should put to the correct endpoint", async () => {
   const mockTodo: CreateTodo = { text: "Updated Todo", priority: "MEDIUM" };
   const mockResponse = { data: mockTodo, status: 200 };
@@ -45,6 +54,9 @@ test("editTodo should put to the correct endpoint", async () => {
   expect(result).toEqual(mockResponse);
 });
 
+/**
+ * Tests the `deleteTodo` function to ensure it deletes the correct endpoint.
+ */
 test("deleteTodo should delete the correct endpoint", async () => {
   const mockResponse = { status: 204 };
   vi.mocked(http.delete).mockResolvedValueOnce(mockResponse);
@@ -54,6 +66,9 @@ test("deleteTodo should delete the correct endpoint", async () => {
   expect(result).toEqual(mockResponse);
 });
 
+/**
+ * Tests the `changeStatus` function to ensure it calls the correct endpoints for done/undone.
+ */
 test("changeStatus should patch the correct endpoint", async () => {
   await changeStatus(1, true);
   expect(http.put).toHaveBeenCalledWith("/todos/1/done");
@@ -61,6 +76,9 @@ test("changeStatus should patch the correct endpoint", async () => {
   expect(http.put).toHaveBeenCalledWith("/todos/1/undone");
 });
 
+/**
+ * Tests the `getStats` function to ensure it calls the correct endpoint.
+ */
 test("getStats should call the correct endpoint", async () => {
   getSTats();
   expect(http.get).toHaveBeenCalledWith("/todos/stats");

@@ -7,12 +7,15 @@ describe("test TodoFilters component", () => {
   let user: UserEvent;
 
   beforeEach(() => {
-    user = userEvent.setup();
+    user = userEvent.setup(); // Initialize user event simulation
   });
 
   // Test to verify the component renders correctly with all expected elements
   it("should render", () => {
+    // Render the TodoFilters component
     render(<TodoFilters onChange={() => {}} searching={false} />);
+
+    // Verify that all filter elements are rendered
     expect(screen.getByText("Text")).toBeDefined();
     expect(screen.getByText("Priority")).toBeDefined();
     expect(screen.getByText("State")).toBeDefined();
@@ -21,8 +24,11 @@ describe("test TodoFilters component", () => {
 
   // Test to verify the onChange callback is triggered when the search button is clicked
   it("should fire when changing", () => {
+    // Mock the onChange callback
     const onChangeCb = vi.fn();
     render(<TodoFilters onChange={onChangeCb} searching={false} />);
+
+    // Verify that the search button triggers the onChange callback
     const button = screen.getByTestId("filters-button");
     expect(button).toBeDefined();
     expect(onChangeCb).toHaveBeenCalledTimes(0);
@@ -32,13 +38,15 @@ describe("test TodoFilters component", () => {
 
   // Test to verify the correct values are sent to the onChange callback when filters are applied
   it("should send values when changing", async () => {
+    // Mock the onChange callback
     const onChangeCb = vi.fn();
     const wrapper = render(
       <TodoFilters onChange={onChangeCb} searching={false} />
     );
+
+    // Simulate applying filters and verify the onChange callback is triggered with correct values
     const button = screen.getByTestId("filters-button");
     expect(button).toBeDefined();
-    expect(onChangeCb).toHaveBeenCalledTimes(0);
     fireEvent.click(button);
     expect(onChangeCb).toHaveBeenCalledTimes(1);
 
@@ -89,6 +97,7 @@ describe("test TodoFilters component", () => {
 
   // Test to verify the reset button clears all filters and triggers onChange with an empty filter
   it("reset button clears filters and calls onChange with empty filter", async () => {
+    // Mock the onChange callback
     const mockOnChange = vi.fn();
     const { getByTestId, getByRole } = render(
       <TodoFilters onChange={mockOnChange} searching={false} />

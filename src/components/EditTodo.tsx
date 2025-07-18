@@ -7,16 +7,28 @@ import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
 import { useState, useCallback } from "react";
 import { editTodo } from "../http/todo";
 
+/**
+ * Props for the EditTodo component.
+ */
 export interface EditTodoProps {
+  /** The todo item to edit. */
   todo: Todo;
+  /** Callback triggered after a successful edit. */
   onEdit?: (todo: Todo) => unknown;
 }
 
+/**
+ * Renders a button to edit a todo and a modal with a form.
+ * @param {EditTodoProps} props - Props for the EditTodo component.
+ */
 export function EditTodo({ todo, onEdit }: EditTodoProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles the editing of a todo.
+   * @param {TodoFormSchema} todoData - The updated todo data from the form.
+   */
   const handleEdition = useCallback(
     (todoData: TodoFormSchema) => {
       setLoading(true);
@@ -26,40 +38,40 @@ export function EditTodo({ todo, onEdit }: EditTodoProps) {
         priority: todoData.priority,
       })
         .then((res) => {
-          if (res.status == 200) {
+          if (res.status === 200) {
             addToast({
               color: "success",
               title: `To-do edited successfully`,
               description: `"${todoData.text.substring(0, 10)}..." edited`,
             });
             onClose();
-            onEdit?.(res.data!);
+            onEdit?.(res.data!); // Trigger onEdit callback
             return;
           }
           addToast({
             color: "warning",
-            title: `To-do couldn't edited`,
-            description: "Plese try again later.",
+            title: `To-do couldn't be edited`,
+            description: "Please try again later.",
           });
         })
         .catch((e) => {
           addToast({
-            color: "warning",
-            title: `To-do couldn't edited`,
-            description: `Error: ${e.message}`,
+            color: "danger",
+            title: `Error editing to-do`,
+            description: e.message,
           });
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [todo, onClose, onEdit, setLoading],
+    [todo, onClose, onEdit]
   );
+
   return (
     <>
       <Button
         data-testid="edit-todo-button"
-        className=""
         variant="solid"
         color="primary"
         onPress={onOpen}
@@ -68,17 +80,13 @@ export function EditTodo({ todo, onEdit }: EditTodoProps) {
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose) => (
-            <TodoForm
-              loading={loading}
-              label="Edit Todo"
-              todo={todo}
-              onChange={(todo) => {
-                handleEdition(todo);
-              }}
-              onClose={onClose}
-            ></TodoForm>
-          )}
+          <TodoForm
+            loading={loading}
+            label="Edit Todo"
+            todo={todo}
+            onChange={handleEdition}
+            onClose={onClose}
+          />
         </ModalContent>
       </Modal>
     </>

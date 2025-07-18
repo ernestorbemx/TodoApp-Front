@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { TodoView } from "./TodoView";
 import { PaginationResult, Stats, Todo } from "../types";
 
+// Mocking HTTP requests for todos and stats
 vi.mock("../http/todo", () => {
   return {
     getTodos: vi.fn(() =>
@@ -31,6 +32,7 @@ vi.mock("../http/todo", () => {
   };
 });
 
+// Mocking the ThemeSwitcher component
 vi.mock("../components/ThemeSwitcher", () => {
   return {
     ThemeSwitcher: () => <p>Mocked Theme Switcher</p>,
@@ -38,11 +40,17 @@ vi.mock("../components/ThemeSwitcher", () => {
 });
 
 describe("Test TodoView component", () => {
+  /**
+   * Tests if the TodoView component renders correctly.
+   */
   it("renders ", async () => {
     render(<TodoView />);
     expect(screen.findAllByText((t) => t.includes("by Ernesto Ramirez")));
   });
 
+  /**
+   * Tests if the TodoView component fetches and displays todos correctly.
+   */
   it("renders and fetches todos", async () => {
     render(<TodoView />);
     await waitFor(() => {
@@ -51,6 +59,9 @@ describe("Test TodoView component", () => {
     });
   });
 
+  /**
+   * Tests if the TodoView component fetches and displays stats correctly.
+   */
   it("renders stats correctly", async () => {
     render(<TodoView />);
     await waitFor(() => {

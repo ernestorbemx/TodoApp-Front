@@ -3,6 +3,9 @@ import { dueDateBackground, formatTime, formatTodoColumns } from ".";
 import { Todo } from "../types";
 
 describe("utils.ts", () => {
+  /**
+   * Tests the `formatTime` function to ensure it formats time correctly.
+   */
   describe("formatTime()", () => {
     it("should format time correctly", () => {
       expect(formatTime(60)).toBe("01:00");
@@ -11,6 +14,9 @@ describe("utils.ts", () => {
     });
   });
 
+  /**
+   * Tests the `dueDateBackground` function to ensure it returns the correct background colors.
+   */
   describe("dueDateBackground()", () => {
     it("should return background colors correspondingly", () => {
       expect(dueDateBackground()).toBe("bg-transparent dark:text-white");
@@ -39,6 +45,9 @@ describe("utils.ts", () => {
     });
   });
 
+  /**
+   * Tests the `formatTodoColumns` function to ensure it formats todo columns correctly.
+   */
   describe("formatTodoColumns()", () => {
     it("should format todo columns correctly", () => {
       const todoWithoutDueDate: Partial<Todo> = {};

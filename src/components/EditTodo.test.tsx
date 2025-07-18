@@ -1,4 +1,4 @@
-import { render, fireEvent } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TodoFormSchema } from "./TodoForm";
 import userEvent from "@testing-library/user-event";
@@ -7,6 +7,7 @@ import { Todo } from "../types";
 import { editTodo } from "../http/todo";
 import { parseDateTime } from "@internationalized/date";
 
+// Mocking the TodoForm component
 vi.mock("./TodoForm", () => ({
   TodoForm: vi.fn(
     ({ onChange }: { onChange: (todo: TodoFormSchema) => unknown }) => (
@@ -28,6 +29,7 @@ vi.mock("./TodoForm", () => ({
   ),
 }));
 
+// Mocking the editTodo function
 vi.mock("../http/todo", () => ({
   editTodo: vi.fn(() =>
     Promise.resolve({
@@ -48,7 +50,7 @@ const mockedEditTodo = vi.mocked(editTodo);
 
 describe("test EditTodo component", () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(); // Clear mocks after each test
   });
 
   const todo: Todo = {
@@ -60,29 +62,47 @@ describe("test EditTodo component", () => {
     dueDate: "2025-04-10T17:00:00Z",
   };
 
-  it("should render", () => {
+  it("should render the edit button", () => {
+    // Render the EditTodo component
     const wrapper = render(<EditTodo todo={todo} />);
+
+    // Verify that the edit button renders correctly
     expect(wrapper.findByText("Edit")).toBeDefined();
   });
 
-  it("should call render TodoForm when button click", async () => {
+  it("should render TodoForm when the edit button is clicked", async () => {
+    // Render the EditTodo component
     const wrapper = render(<EditTodo todo={todo} />);
+
+    // Simulate clicking the edit button
     await userEvent.click(await wrapper.findByTestId("edit-todo-button"));
-    expect(wrapper.findByText("Mocked Todo form")).toBeDefined();
+
+    // Verify that the TodoForm renders
+    expect(wrapper.findByText("Mocked Todo Form")).toBeDefined();
   });
 
-  it("should call editTodo when submit form click", async () => {
+  it("should call editTodo when the form is submitted", async () => {
+    // Render the EditTodo component
     const wrapper = render(<EditTodo todo={todo} />);
+
+    // Simulate opening the modal and submitting the form
     await userEvent.click(await wrapper.findByTestId("edit-todo-button"));
     await userEvent.click(await wrapper.findByText("Click"));
+
+    // Verify that editTodo is called
     expect(mockedEditTodo).toBeCalledTimes(1);
   });
 
-  it("should call onEdit", async () => {
+  it("should call onEdit after successful edit", async () => {
+    // Mock the onEdit callback
     const onEditFn = vi.fn();
     const wrapper = render(<EditTodo todo={todo} onEdit={onEditFn} />);
+
+    // Simulate opening the modal and submitting the form
     await userEvent.click(await wrapper.findByTestId("edit-todo-button"));
     await userEvent.click(await wrapper.findByText("Click"));
+
+    // Verify that onEdit is called after successful edit
     expect(mockedEditTodo).toBeCalledTimes(1);
     expect(onEditFn).toBeCalledTimes(1);
   });

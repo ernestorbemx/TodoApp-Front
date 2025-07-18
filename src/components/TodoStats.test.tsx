@@ -4,12 +4,12 @@ import { Stats } from "../types";
 import { TodoStats } from "./TodoStats";
 import { formatTime } from "../utils";
 
+// Mocking utility functions
 vi.mock("../utils", { spy: true });
-// const formatTimeMock = vi.mocked(formatTime)
 
-describe("test TodoStats component and formatTime", () => {
+describe("TodoStats component tests", () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(); // Clear mocks after each test
   });
 
   const emptyStats: Stats = {
@@ -19,16 +19,16 @@ describe("test TodoStats component and formatTime", () => {
     mediumPriorityAvg: -1,
   };
 
-  it("should render", () => {
+  it("should render the component", () => {
     render(<TodoStats data={emptyStats} />);
     expect(
-      screen.getByText((t) => t.includes("Average time to complete by"))
-    ).toBeDefined();
+      screen.getByText((text) => text.includes("Average time to complete by"))
+    ).toBeDefined(); // Verify the component renders correctly
   });
 
-  it("should show when no stats available", () => {
+  it("should display 'No stats at the moment' when data is undefined", () => {
     render(<TodoStats data={undefined} />);
-    expect(screen.getByText("No stats at the moment")).toBeDefined();
+    expect(screen.getByText("No stats at the moment")).toBeDefined(); // Verify fallback message
   });
 
   it.skip("should call formatTime four times when data is all set", () => {
@@ -54,6 +54,7 @@ describe("test TodoStats component and formatTime", () => {
     };
     const { getByText } = render(<TodoStats data={stats} />);
 
+    // Verify stats are displayed correctly
     expect(getByText(/00:10/)).toBeInTheDocument();
     expect(getByText(/00:05/)).toBeInTheDocument();
     expect(getByText(/00:15/)).toBeInTheDocument();

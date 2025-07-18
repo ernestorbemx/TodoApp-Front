@@ -3,7 +3,19 @@ import { Stats } from "../types";
 import { formatTime } from "../utils";
 import { PriorityLabel } from "./PriorityLabel";
 
-export function TodoStats({ data }: { data: Stats | undefined }) {
+/**
+ * Props for the TodoStats component.
+ */
+interface TodoStatsProps {
+  /** Statistics data for todos. */
+  data: Stats | undefined;
+}
+
+/**
+ * Renders a card displaying statistics about todos.
+ * @param {TodoStatsProps} props - Props for the TodoStats component.
+ */
+export function TodoStats({ data }: TodoStatsProps) {
   return (
     <Card className="flex flex-col md:flex-row gap-x-16 gap-y-8 p-4">
       {data ? (
@@ -14,7 +26,7 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
                 Average time to complete <b>remaining</b> tasks:
               </h5>
               <p>
-                {data.avg == -1 ? (
+                {data.avg === -1 ? (
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
@@ -29,19 +41,21 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
               Average time to complete by <b>priority</b>:
             </h5>
             <div className="flex flex-col gap-1">
+              {/* High priority stats */}
               <div>
-                <PriorityLabel priority="HIGH"></PriorityLabel>{" "}
-                {data.lowPriorityAvg == -1 ? (
+                <PriorityLabel priority="HIGH" />{" "}
+                {data.highPriorityAvg === -1 ? (
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.lowPriorityAvg)} minutes
+                    {formatTime(data.highPriorityAvg)} minutes
                   </span>
                 )}
               </div>
+              {/* Medium priority stats */}
               <div>
-                <PriorityLabel priority="MEDIUM"></PriorityLabel>{" "}
-                {data.mediumPriorityAvg == -1 ? (
+                <PriorityLabel priority="MEDIUM" />{" "}
+                {data.mediumPriorityAvg === -1 ? (
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
@@ -49,13 +63,14 @@ export function TodoStats({ data }: { data: Stats | undefined }) {
                   </span>
                 )}
               </div>
+              {/* Low priority stats */}
               <div>
-                <PriorityLabel priority="LOW"></PriorityLabel>{" "}
-                {data.highPriorityAvg == -1 ? (
+                <PriorityLabel priority="LOW" />{" "}
+                {data.lowPriorityAvg === -1 ? (
                   "No enough info available"
                 ) : (
                   <span className="font-bold font-mono text-lg">
-                    {formatTime(data.highPriorityAvg)} minutes
+                    {formatTime(data.lowPriorityAvg)} minutes
                   </span>
                 )}
               </div>

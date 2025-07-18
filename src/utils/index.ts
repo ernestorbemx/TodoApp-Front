@@ -1,12 +1,22 @@
 import { format, formatDistanceToNow } from "date-fns";
 import { Todo } from "../types";
 
+/**
+ * Formats a given time in seconds into a string in the format "MM:SS".
+ * @param seconds - The time in seconds to format.
+ * @returns A formatted time string.
+ */
 export function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const secondsRemaining = seconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${secondsRemaining.toString().padStart(2, "0")}`;
 }
 
+/**
+ * Determines the background color based on the due date of a todo.
+ * @param dueDate - The due date of the todo.
+ * @returns A string representing the background color class.
+ */
 export function dueDateBackground(dueDate?: Date) {
   if (!dueDate) {
     return "bg-transparent dark:text-white";
@@ -20,9 +30,14 @@ export function dueDateBackground(dueDate?: Date) {
     // Between one week and two weeks
     return "bg-yellow-200 dark:bg-yellow-400 dark:text-black";
   }
-  return "bg-red-200 dark:bg-red-400 dark:text-black"; // One week between
+  return "bg-red-200 dark:bg-red-400 dark:text-black"; // One week or less
 }
 
+/**
+ * Formats the columns of a todo item for display.
+ * @param todo - The todo item to format.
+ * @returns An object containing formatted background color, due date, and relative due date.
+ */
 export function formatTodoColumns(todo: Partial<Todo>) {
   const bgColor = dueDateBackground(
     todo.dueDate ? new Date(todo.dueDate) : undefined

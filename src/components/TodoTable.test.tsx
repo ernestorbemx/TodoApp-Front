@@ -7,6 +7,7 @@ import userEvent, { UserEvent } from "@testing-library/user-event";
 import { EditTodo } from "./EditTodo";
 import { DeleteTodo } from "./DeleteTodo";
 
+// Mocking HTTP and component dependencies
 vi.mock("../http/todo", () => ({
   changeStatus: vi.fn(() =>
     Promise.resolve({
@@ -28,18 +29,18 @@ vi.mock("./EditTodo", () => ({
 }));
 
 vi.mock("./DeleteTodo", () => ({
-  DeleteTodo: vi.fn(() => <p>Mocked EditTodo</p>),
+  DeleteTodo: vi.fn(() => <p>Mocked DeleteTodo</p>),
 }));
 
 describe("TodoTable test:", () => {
   let user: UserEvent;
 
   beforeEach(() => {
-    user = userEvent.setup();
+    user = userEvent.setup(); // Initialize user event simulation
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(); // Clear mocks after each test
   });
 
   const todos: Todo[] = [
@@ -100,15 +101,17 @@ describe("TodoTable test:", () => {
   });
 
   it("renders todos correctly", () => {
+    // Test rendering of todos
     render(
       <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
     todos.forEach((t) => {
-      expect(screen.getByText(t.text)).toBeInTheDocument();
+      expect(screen.getByText(t.text)).toBeInTheDocument(); // Verify todo text is displayed
     });
   });
 
   it("calls update status on table checkbox", async () => {
+    // Test bulk status update via checkbox
     const wrapper = render(
       <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
@@ -117,20 +120,20 @@ describe("TodoTable test:", () => {
     const input = checkbox.querySelector("input");
     expect(input).toBeDefined();
 
-    expect(input!.checked).toBe(false);
-    await user.click(input!);
-    // Wait for the state change to reflect in the UI
-    expect(changeStatus).toHaveBeenCalledTimes(3);
+    expect(input!.checked).toBe(false); // Initial state
+    await user.click(input!); // Simulate user interaction
+    expect(changeStatus).toHaveBeenCalledTimes(3); // Verify API calls
   });
 
   it("calls EditTodo and DeleteTodo on render", () => {
+    // Test rendering of EditTodo and DeleteTodo components
     const MockedEditTodo = vi.mocked(EditTodo);
     const MockedDeleteTodo = vi.mocked(DeleteTodo);
     render(
       <TodoTable data={todos} onUpdate={() => {}} onSortingChange={() => {}} />
     );
-    expect(MockedEditTodo).toBeCalledTimes(todos.length);
-    expect(MockedDeleteTodo).toBeCalledTimes(todos.length);
+    expect(MockedEditTodo).toBeCalledTimes(todos.length); // Verify EditTodo is rendered
+    expect(MockedDeleteTodo).toBeCalledTimes(todos.length); // Verify DeleteTodo is rendered
   });
 
   it("optimistically updates row-level item status", async () => {

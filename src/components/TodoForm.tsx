@@ -11,9 +11,12 @@ import { Button } from "@heroui/button";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { useEffect } from "react";
 
+/**
+ * Validation schema for the TodoForm.
+ */
 const schema = yup
   .object({
-    text: yup.string().max(1).max(120).required(),
+    text: yup.string().max(120).required(),
     priority: yup.string().oneOf(["LOW", "MEDIUM", "HIGH"]).required(),
     dueDate: yup.object().nullable().optional(),
   })
@@ -21,12 +24,19 @@ const schema = yup
 
 export type TodoFormSchema = yup.InferType<typeof schema>;
 
+/**
+ * Props for the TodoForm component.
+ */
 export interface TodoFormProps {
+  /** Indicates if the form is in a loading state. */
   loading: boolean;
+  /** The todo object to edit (optional). */
   todo?: Partial<Todo>;
+  /** Label for the form. */
   label: string;
-  // mode: "edit" | "create";
+  /** Callback when the form is submitted. */
   onChange: (todo: TodoFormSchema) => unknown;
+  /** Callback when the form is closed. */
   onClose: () => unknown;
 }
 
@@ -36,6 +46,10 @@ const priorities: { label: string; value: Priority }[] = [
   { label: "Low", value: "LOW" },
 ];
 
+/**
+ * Renders a form for creating or editing a todo.
+ * @param {TodoFormProps} props - Props for the TodoForm component.
+ */
 export function TodoForm({
   loading,
   todo,
@@ -71,6 +85,7 @@ export function TodoForm({
     <>
       <ModalHeader className="flex flex-col gap-1">{label}</ModalHeader>
       <ModalBody>
+        {/* Text input for todo text */}
         <Controller
           name="text"
           control={control}
@@ -91,6 +106,7 @@ export function TodoForm({
             />
           )}
         />
+        {/* Select input for priority */}
         <Controller
           name="priority"
           control={control}
@@ -121,6 +137,7 @@ export function TodoForm({
           )}
         />
         <div className="flex items-center gap-x-2">
+          {/* Date picker for due date */}
           <Controller
             name="dueDate"
             control={control}
